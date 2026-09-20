@@ -157,7 +157,6 @@ export function Feedback({
   improvements,
   improvementsTitle = "Suggested improvements",
   considerations,
-  considerationsTitle = "Further considerations",
   paragraphs,
   placeholder = "Replace with feedback and suggested improvements for the proposal.",
 }: {
@@ -165,7 +164,6 @@ export function Feedback({
   improvements?: string[];
   improvementsTitle?: string;
   considerations?: ConsiderationItem[];
-  considerationsTitle?: string;
   paragraphs?: string[];
   placeholder?: string;
 }) {
@@ -202,7 +200,6 @@ export function Feedback({
       )}
       {considerations && considerations.length > 0 && (
         <div className="feedback-considerations">
-          <h4 className="feedback-considerations-title">{considerationsTitle}</h4>
           <p className="feedback-considerations-sub">
             Additional factors to weigh that are not yet built into the model
           </p>

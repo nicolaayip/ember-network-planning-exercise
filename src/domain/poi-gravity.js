@@ -10,7 +10,6 @@
 import * as turf from "@turf/turf";
 import { haversineMetres } from "../lib/geo.js";
 
-/** Weights from the §3.5 table. */
 export const POI_WEIGHTS = {
   medical: { weekday: 10, weekend: 2 },
   retail: { weekday: 7, weekend: 8 },

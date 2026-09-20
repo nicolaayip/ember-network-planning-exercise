@@ -14,7 +14,7 @@
   --accent-soft: color-mix(in srgb, var(--accent) 9%, #f6f7ef);
   --accent-bright: #c6dad4;
   --hover: color-mix(in srgb, #0c0b0a 5%, transparent);
-  --warn: #9a6b12;
+  --warn: #ee6d2e;
   --warn-soft: #fbf3dc;
   --bad: #a83a2a;
   --bad-soft: #fbe7e2;
@@ -48,7 +48,7 @@
     -apple-system,
     "Segoe UI",
     sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.5;
   color: var(--ink);
   background: var(--bg);
@@ -109,12 +109,12 @@ li {
 }
 code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12.5px;
+  font-size: 11px;
   background: var(--muted-bg);
   border: 1px solid var(--line);
   padding: 1px 5px;
   border-radius: var(--radius);
-  color: var(--ink-2);
+  color: var(--muted);
 }
 select,
 button,
@@ -190,7 +190,7 @@ input {
   border-radius: var(--radius);
   background: transparent;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 20px;
   font-weight: 400;
   transition:
@@ -263,7 +263,7 @@ input {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: 13px;
 }
 .crumb {
   font-weight: 500;
@@ -651,7 +651,7 @@ input {
 table.data {
   border-collapse: collapse;
   width: 100%;
-  font-size: 13px;
+  font-size: 12px;
 }
 /* Route stops + legs # column — fixed width only; other columns stay auto */
 table.data th.col-row-num,
@@ -809,7 +809,7 @@ table.data td.wrap {
   margin: 6px 0 0;
 }
 .stat-compact.stat-value-wrap .value {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.35;
   letter-spacing: normal;
 }
@@ -976,6 +976,60 @@ table.data td.wrap {
   height: 100%;
   margin: 0;
   text-align: center;
+}
+.timetable-boards {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.timetable-board-section + .timetable-board-section {
+  margin-top: 20px;
+}
+.timetable-board-head {
+  margin-bottom: 10px;
+}
+.timetable-board-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.timetable-board-sub {
+  margin: 4px 0 0;
+}
+.timetable-board-block + .timetable-board-block {
+  margin-top: 14px;
+}
+.timetable-board-direction {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.timetable-board-wrap {
+  max-width: 100%;
+}
+.timetable-board {
+  font-size: 12px;
+}
+.timetable-board-stop {
+  min-width: 10rem;
+  max-width: 14rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.timetable-board-group {
+  font-size: 11.5px;
+  padding: 8px 6px 4px;
+}
+.timetable-board-trip {
+  min-width: 2.75rem;
+  font-size: 11px;
+  font-weight: 600;
+}
+.timetable-board-time {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .timetable-audit-stat.active {
   border-color: var(--accent);

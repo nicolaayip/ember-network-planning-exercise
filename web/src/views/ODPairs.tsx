@@ -217,36 +217,36 @@ export default function ODPairs({ doc, direction }: ViewProps) {
   return (
     <>
       <Feedback
-        feedback={
-          "The pair matrix below shows a wide spread in time and detour ratios, with severe outliers driven by circuitous routing and intermediate dwell. Most pairs are unserved by direct competitors, but unserved does not mean valuable. Cross-reference this tab with Route & stops to judge whether slow pairs justify their anchor stops or should be cut."
-        }
+        feedback="The stop pairs table show every origin-destination pair the proposed route serve. Detour ratios vary widely with a median free-flow coach-to-car time ratio of 1.48, meaning coach trips take roughly 50% longer than driving even in optimal, traffic-free conditions. This sits above the 1.25x band where mode-share conversion typically holds. Most pairs are unserved by direct competitors at 23%, but unserved does not mean valuable. Cross-reference this tab with Route & stops to judge whether slow pairs justify their anchor stops or should be cut. Time deviation ≥1.5x is flagged in amber in the stop pairs table."
         improvements={[
-          "Cross-check the stops driving the worst time and detour ratios against the earlier route & stops analysis. If an anchor stop behind a high ratio (e.g., East Flemington) also has low catchment population and weak POI gravity, drop or reposition it.   ",
-          "Do not preserve slow, circuitous pairs purely because they are unserved. Use the stop-level catchment and POI data to verify whether unserved pairs represent genuine untapped market demand or merely empty geographic coverage.",
-          "Keep overall time ratios as close to ~1.25x as possible. Transport demand models show passenger conversion drops off sharply once coach travel time drifts past 1.30x to 1.50x direct car time.",
+          "Examine top detour contributors: East Flemington (Nr) and Blindwells South (at) recur among the worst detour ratios, cross-check each against Route & stops. If an anchor stop driving a high ratio also has low catchment and weak POI gravity, drop or reposition it.",
+          "Unserved pairs are not necessarily valuable: Do not pairs purely because they are unserved. Use the stop-level catchment and POI data to verify whether stops in unserved pairs represent genuine untapped market demand or merely empty geographic coverage.",
+          "Keep overall time ratios close to ~1.25x: Transport demand models show passenger conversion drops off sharply once coach travel time drifts past 1.30x to 1.50x direct car time.",
         ]}
-        considerations={[
-          {
-            label: "Pair weighting",
-            text: "The median pair ratio treats every journey equally. In practice, pairs differ in revenue potential and should not be weighted the same when judging competitiveness.",
-          },
-          {
-            label: "Traffic-window ratios",
-            text: "Time ratio currently compares free-flow travel times. Traffic-window variants would further improve peak vs off-peak mode-choice review.",
-          },
-          {
-            label: "Stop aliasing",
-            text: "Competitor supply only matches exact NaPTAN codes OD pairing. Also linking codes within 10-minute walk catchment of our stops would surface more competing lines that are currently marked as unserved.",
-          },
-          {
-            label: "Rail competition",
-            text: "ORR data could expose data for comparing pairs against parallel rail routes. There may be opportunities to capture cost-conscious passengers switching from rail to coach, especially when rail prices rise.",
-          },
-          {
-            label: "Census OD flows",
-            text: "Travel-to-work origin-destination census data could show genuine daily travel flows per OD pair rather than static population counts alone. Initial review shows that data mapping (MSOA to LSOA) for cross border journeys seems too coarse and 2021/2022 data also requires correction for lockdown but still worth exploring.",
-          },
-        ] satisfies ConsiderationItem[]}
+        considerations={
+          [
+            {
+              label: "Pair weighting",
+              text: "The median pair ratio treats every journey equally. In practice, pairs differ in revenue potential and should not be weighted the same when judging competitiveness.",
+            },
+            {
+              label: "Traffic-window ratios",
+              text: "Time ratio currently compares free-flow travel times. Traffic-window variants would further improve peak vs off-peak mode-choice review.",
+            },
+            {
+              label: "Stop aliasing",
+              text: "Competitor supply only matches exact NaPTAN codes OD pairing. Also linking codes within 10-minute walk catchment of our stops would surface more competing lines that are currently marked as unserved.",
+            },
+            {
+              label: "Rail competition",
+              text: "ORR data could expose data for comparing pairs against parallel rail routes. There may be opportunities to capture cost-conscious passengers switching from rail to coach, especially when rail prices rise.",
+            },
+            {
+              label: "Census OD flows",
+              text: "Travel-to-work origin-destination census data could show genuine daily travel flows per OD pair rather than static population counts alone. Initial review shows that data mapping (MSOA to LSOA) for cross border journeys seems too coarse and 2021/2022 data also requires correction for lockdown but still worth exploring.",
+            },
+          ] satisfies ConsiderationItem[]
+        }
       />
       <Panel title={`Stop pairs`}>
         <div className="stats margin-bottom-12">

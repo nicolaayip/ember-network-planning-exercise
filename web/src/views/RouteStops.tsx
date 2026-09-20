@@ -1,10 +1,9 @@
 /** @format */
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import type { ViewProps } from "../App";
 import type { Stop } from "../types";
 import {
-  Badge,
   DataTable,
   Feedback,
   Panel,
@@ -16,6 +15,31 @@ import RouteMap from "../components/RouteMap";
 import { depotStop, passengerStops, totalCatchment, totalPoi } from "../lib/derive";
 import { KMZ_ALIGN_M, copyText, formatLatLng, matchPins, nearestPin } from "../lib/geo";
 import { isNum, num } from "../lib/format";
+
+/** Catchment population and combined POI at or below this are flagged as low-yield. */
+const LOW_YIELD_MAX = 99;
+
+function isLowYield(v: number | undefined | null): boolean {
+  return isNum(v) && v <= LOW_YIELD_MAX;
+}
+
+function combinedPoi(s: Stop): number | null {
+  if (!s.poi) return null;
+  return (s.poi.weekday ?? 0) + (s.poi.weekend ?? 0);
+}
+
+function isLowYieldStop(s: Stop): boolean {
+  return isLowYield(s.catchment?.population) && isLowYield(combinedPoi(s));
+}
+
+function warnIfLowYieldStop(s: Stop, content: ReactNode) {
+  if (!isLowYieldStop(s)) return content;
+  return (
+    <span style={{ color: "var(--warn)", fontWeight: 600 }} title="Low yield">
+      {content}
+    </span>
+  );
+}
 
 export default function RouteStops({ doc, pins, direction }: ViewProps) {
   const dir = doc.directions[direction];
@@ -44,15 +68,6 @@ export default function RouteStops({ doc, pins, direction }: ViewProps) {
     return p ? p.name : <span className="muted">–</span>;
   };
 
-  const alignCell = (s: Stop) => {
-    const p = pinInfo.byStop.get(s.naptanId);
-    if (!p) return <span className="muted">–</span>;
-    const m = Math.round(p.metres);
-    if (m <= KMZ_ALIGN_M) return <Badge kind="ok">{m} m</Badge>;
-    if (m <= 400) return <Badge kind="warn">{m} m off</Badge>;
-    return <Badge kind="bad">no pin within 400 m</Badge>;
-  };
-
   const columns: Column<Stop>[] = [
     {
       key: "seq",
@@ -61,6 +76,13 @@ export default function RouteStops({ doc, pins, direction }: ViewProps) {
       title: "Passenger stops numbered 1…n in route order",
       render: (_s, i) => String(i + 1),
       num: true,
+    },
+
+    {
+      key: "kmz",
+      header: "KMZ pin",
+      title: "KMZ placemark for this direction.",
+      render: kmzNameCell,
     },
     {
       key: "name",
@@ -137,18 +159,7 @@ export default function RouteStops({ doc, pins, direction }: ViewProps) {
         );
       },
     },
-    {
-      key: "kmz",
-      header: "KMZ pin",
-      title: "KMZ placemark for this direction.",
-      render: kmzNameCell,
-    },
-    // {
-    //   key: "align",
-    //   header: "Pin alignment",
-    //   title: `Distance from the KMZ placemark to the NaPTAN stop the engine uses. Within ${KMZ_ALIGN_M} m is treated as aligned.`,
-    //   render: alignCell,
-    // },
+
     { key: "atco", header: "ATCO", render: (s) => <code>{s.naptanId}</code> },
     {
       key: "dev",
@@ -175,14 +186,20 @@ export default function RouteStops({ doc, pins, direction }: ViewProps) {
     {
       key: "pop",
       header: "10-min walk catchment",
-      title: "Residents within a 10-minute walk",
-      render: (s) => num(s.catchment?.population),
+      title:
+        "Residents within a 10-minute walk; flagged when both catchment and combined POI are ≤99",
+      render: (s) => warnIfLowYieldStop(s, num(s.catchment?.population)),
       num: true,
     },
     {
       key: "poi",
       header: "POI wkday / wkend",
-      render: (s) => (s.poi ? `${num(s.poi.weekday)} / ${num(s.poi.weekend)}` : "–"),
+      title:
+        "Combined weekday + weekend POI gravity; flagged when both catchment and combined POI are ≤99",
+      render: (s) => {
+        if (!s.poi) return "–";
+        return warnIfLowYieldStop(s, `${num(s.poi.weekday)} / ${num(s.poi.weekend)}`);
+      },
       num: true,
     },
   ];
@@ -190,11 +207,11 @@ export default function RouteStops({ doc, pins, direction }: ViewProps) {
   return (
     <>
       <Feedback
-        feedback="Every proposed stop matches an official NaPTAN record and the overall stop set is mostly reasonable, but the map and table below show routing issues that need attention before launch. Pin placement errors, clustered town stops, and low-yield deviations add schedule drag that could be trimmed without losing core demand."
+        feedback="Every proposed stop matches an official NaPTAN record ≤ 5m and the overall stop set is mostly reasonable, but there are pin placement errors, clustered town stops, and low-yield deviations that should be addressed. Use the map and stops table below to review specifics. Deviation ≥8 min and low-yield stops are flagged in amber in the stops table."
         improvements={[
-          "Fix pin positioning at Houndwood first: Outbound/return pins appear to be on the wrong side of the carriageway, causing an artificial 21-minute deviation. Swapping the directional stops reduces this significantly; however, given its 3-person walk catchment and zero POI gravity, investigate if keeping this stop on the route is justified or if there are better nearby alternatives.",
-          "Keep Haddington despite high deviation: Although it incurs the second-costliest deviation at 8.7 min, keep the stop as it captures ~4,500 residents within a 10-minute walk and carries strong POI gravity. Investigate whether there exists alternative stop closer to the main A1 junction that allows us to preserve this high-yielding market while trimming off-route driving time.",
-          "Review rural low-yield stops in order of priority: Investigate Tritlington, North Charlton, Haggerston, and Burnmouth (along with Belford) for nearby NaPTAN alternatives. They are cheap on deviation (≤5 min), but serve ≤25 walk-catchment residents each, so pre-booked demand is likely minimal. Look for alternative towns directly along the A1 corridor that offer higher catchment populations and stronger POI gravity.",
+          "Fix pin positioning at Houndwood first: Outbound/return pins appear to be on the wrong side of the carriageway, inflating deviation to 21-minutes. Swapping the directional stops reduces this significantly; however, given its 3-person walk catchment and zero POI gravity, investigate if keeping this stop on the route is justified or if there are better nearby alternatives.",
+          "Keep Haddington despite high deviation: Although it incurs the second-costliest deviation, keep the stop as it captures 4,500+ residents within a 10-minute walk and carries strong POI gravity. Investigate whether there exists alternative stop closer to the main A1 junction that allows us to preserve this high-yielding market while trimming off-route driving time.",
+          "Review rural low-yield stops in order of priority: Investigate Tritlington, North Charlton, Belford, Haggerston, Burnmout and Houndwood for nearby NaPTAN alternatives. They are cheap on deviation (≤5 min), but serve ≤25 walk-catchment residents each, so pre-booked demand is likely minimal. Look for alternative towns directly along the A1 corridor that offer higher catchment populations and stronger POI gravity.",
           "Optimize stop spacing in Morpeth: There is a slight overlap between the Morpeth Loansdean and Morpeth Town Centre catchments on the outbound route. Rather than dropping coverage, consider shifting Loansdean further south and/or Town Centre further north, depending on catchment population and POI score movement, to better space out the stops. Make sure to see how alternative stops affect the return route as well. You could also consider consolidating to Morpeth Town Centre (2,903 catchment) if protecting through-journey speeds to Edinburgh is the primary goal.",
         ]}
         considerations={
@@ -214,6 +231,10 @@ export default function RouteStops({ doc, pins, direction }: ViewProps) {
             {
               label: "Nearby interchanges",
               text: "Check for established competitor hubs or transport interchanges near proposed stops as being nearer to them makes the route more attractive to connecting passengers.",
+            },
+            {
+              label: "Route benchmarks",
+              text: "The route's combined walk catchment population and POI score are hard to judge on their own, benchmark both against other performing Ember routes rather than reading the figures in isolation.",
             },
           ] satisfies ConsiderationItem[]
         }
@@ -308,14 +329,6 @@ export default function RouteStops({ doc, pins, direction }: ViewProps) {
             </>
           )}
         </div>
-        {/* {pins.length > 0 && (
-          <p className="small muted" style={{ marginTop: 8 }}>
-            Click a stop name in the table to zoom to street level. A dotted line joins
-            each KMZ pin to the NaPTAN stop the engine uses; the label is the offset in
-            metres. Pin alignment shows the same offset; values over {KMZ_ALIGN_M} m are
-            flagged.
-          </p>
-        )} */}
       </Panel>
       <Panel title="Stops table">
         <DataTable

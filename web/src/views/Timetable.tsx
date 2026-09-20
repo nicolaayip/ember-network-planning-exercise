@@ -19,21 +19,127 @@ import {
   type Column,
   type ConsiderationItem,
 } from "../components/ui";
+import { TimetableGroupedGrid } from "../components/TimetableBoard";
 import {
+  deadLegAllowances,
   departuresPerService,
   hasSupplyData,
   headwayGapDepartingLine,
   headwayGapThresholdFromDocument,
   proposedTimetableRows,
   slotCandidateRows,
-  slotRankingMeta,
   slotSelectedRows,
   stopName,
   type TimetableDay,
 } from "../lib/derive";
-import { displayServiceTime, duration, isNum, num } from "../lib/format";
+import { fleetVehicleRange, type ScheduleColumn } from "../lib/fleet-schedule";
+import {
+  buildProposedTimetableBoardGrouped,
+  buildSuggestedTimetableBoardGrouped,
+} from "../lib/timetable-board";
+import { displayServiceTime, duration, isNum, num, parseHHMM } from "../lib/format";
 
 type AuditSource = "proposed" | "suggested";
+
+/** Proposed timetable service count for gap-hit comparison. */
+const COMPARE_SERVICE_COUNT = 8;
+/** Recommended initial launch band for suggested scheduling stats. */
+const LAUNCH_MIN = 3;
+const LAUNCH_MAX = 5;
+
+function cumulativeHitsAt(rows: TimetableDisplayRow[], n: number): number | null {
+  const hits = rows[Math.min(n, rows.length) - 1]?.cumulativeGapHits;
+  return isNum(hits) ? hits : null;
+}
+
+function hitsBandRange(
+  rows: TimetableDisplayRow[],
+  minN: number,
+  maxN: number,
+): { range: string; sub: string } | null {
+  if (!rows.length) return null;
+  const lowN = Math.min(minN, rows.length);
+  const highN = Math.min(maxN, rows.length);
+  const low = cumulativeHitsAt(rows, lowN);
+  const high = cumulativeHitsAt(rows, highN);
+  if (!isNum(low) || !isNum(high)) return null;
+  const min = Math.min(low, high);
+  const max = Math.max(low, high);
+  const full = rows.at(-1)?.cumulativeGapHits;
+  return {
+    range: min === max ? num(min) : `${num(min)}–${num(max)}`,
+    sub:
+      isNum(full) && rows.length > highN
+        ? `${lowN}–${highN} services · ${num(full)} for all ${rows.length}`
+        : `${lowN}–${highN} gap-ranked services`,
+  };
+}
+
+function fleetBandRange(
+  doc: Parameters<typeof deadLegAllowances>[0],
+  fleet: NonNullable<ViewProps["doc"]["fleet"]>,
+  rows: TimetableDisplayRow[],
+  minN: number,
+  maxN: number,
+) {
+  if (!rows.length) return null;
+  const lowN = Math.min(minN, rows.length);
+  const highN = Math.min(maxN, rows.length);
+  const counts: number[] = [];
+  for (const n of new Set([lowN, highN])) {
+    const f = fleetVehicleRange(
+      fleet,
+      timetableRowsToFleetColumns(doc, rows.slice(0, n)),
+    );
+    if (f) counts.push(f.min, f.max);
+  }
+  if (!counts.length) return null;
+  const min = Math.min(...counts);
+  const max = Math.max(...counts);
+  const atLow = fleetVehicleRange(
+    fleet,
+    timetableRowsToFleetColumns(doc, rows.slice(0, lowN)),
+  );
+  const atHigh =
+    highN !== lowN
+      ? fleetVehicleRange(fleet, timetableRowsToFleetColumns(doc, rows.slice(0, highN)))
+      : null;
+  const cableNote =
+    atLow &&
+    isNum(atLow.min) &&
+    isNum(atLow.max) &&
+    atLow.min !== atLow.max &&
+    atLow.sub !== "dependent on cable availability"
+      ? atLow.sub
+      : null;
+  return {
+    range: min === max ? String(min) : `${min}–${max}`,
+    sub:
+      cableNote ??
+      (atHigh && atLow
+        ? `${atLow.range} at ${lowN} · ${atHigh.range} at ${highN} services`
+        : `${lowN}–${highN} services`),
+  };
+}
+
+function timetableRowsToFleetColumns(
+  doc: Parameters<typeof deadLegAllowances>[0],
+  rows: TimetableDisplayRow[],
+): ScheduleColumn[] {
+  const dead = deadLegAllowances(doc);
+  return rows
+    .map((r) => {
+      const depotDeparture = parseHHMM(r.outboundDeparture);
+      const depotArrival = parseHHMM(r.returnArrival);
+      if (depotDeparture == null || depotArrival == null) return null;
+      return {
+        columnId: r.columnId,
+        depotDeparture: depotDeparture - dead.out,
+        depotArrival: depotArrival + dead.in,
+      };
+    })
+    .filter((c): c is ScheduleColumn => c != null);
+}
 
 function timetableTableColumns(mode: "audit" | "ranked"): Column<TimetableDisplayRow>[] {
   const idColumn: Column<TimetableDisplayRow> = {
@@ -176,6 +282,7 @@ function HeadwayGapsTable({
 
 export default function Timetable({ doc, direction }: ViewProps) {
   const [auditSource, setAuditSource] = useState<AuditSource>("proposed");
+  const [timetableSource, setTimetableSource] = useState<AuditSource>("proposed");
   const [day, setDay] = useState<TimetableDay>("weekday");
   const [showAllCandidates, setShowAllCandidates] = useState(false);
   const dir = doc.directions[direction];
@@ -196,11 +303,42 @@ export default function Timetable({ doc, direction }: ViewProps) {
   const proposedRows = useMemo(() => proposedTimetableRows(doc, day), [doc, day]);
   const slotCandidates = useMemo(() => slotCandidateRows(doc, day), [doc, day]);
   const slotSelected = useMemo(() => slotSelectedRows(doc, day), [doc, day]);
-  const slotMeta = useMemo(() => slotRankingMeta(doc, day), [doc, day]);
-  const proposedGapTotal = proposedRows.at(-1)?.cumulativeGapHits;
-  const suggestedGapTotal = slotSelected.at(-1)?.cumulativeGapHits;
-  const auditGapTotal = auditSource === "proposed" ? proposedGapTotal : suggestedGapTotal;
-  const competitorLabel = day === "weekday" ? "weekday BODS" : "weekend BODS";
+  const slotSelectedWeekday = useMemo(() => slotSelectedRows(doc, "weekday"), [doc]);
+  const slotSelectedWeekend = useMemo(() => slotSelectedRows(doc, "weekend"), [doc]);
+  const launchSlice = (rows: TimetableDisplayRow[]) => rows.slice(0, LAUNCH_MAX);
+  const proposedGroupedBoard = useMemo(
+    () => buildProposedTimetableBoardGrouped(doc, direction, LAUNCH_MAX),
+    [doc, direction],
+  );
+  const suggestedGroupedBoard = useMemo(
+    () =>
+      buildSuggestedTimetableBoardGrouped(
+        doc,
+        direction,
+        launchSlice(slotSelectedWeekday),
+        launchSlice(slotSelectedWeekend),
+      ),
+    [doc, direction, slotSelectedWeekday, slotSelectedWeekend],
+  );
+  const compareCount = Math.min(COMPARE_SERVICE_COUNT, proposedRows.length);
+  const proposedFleet = useMemo(() => {
+    const fleet = doc.fleet;
+    if (!fleet) return null;
+    return fleetVehicleRange(fleet, timetableRowsToFleetColumns(doc, proposedRows));
+  }, [doc, proposedRows]);
+  const suggestedLaunchHits = useMemo(
+    () => hitsBandRange(slotSelected, LAUNCH_MIN, LAUNCH_MAX),
+    [slotSelected],
+  );
+  const suggestedLaunchFleet = useMemo(() => {
+    const fleet = doc.fleet;
+    if (!fleet) return null;
+    return fleetBandRange(doc, fleet, slotSelected, LAUNCH_MIN, LAUNCH_MAX);
+  }, [doc, slotSelected]);
+
+  const proposedGapTotal =
+    proposedRows[compareCount - 1]?.cumulativeGapHits ??
+    proposedRows.at(-1)?.cumulativeGapHits;
   const showingCandidates = auditSource === "suggested" && showAllCandidates;
   const tableMode = showingCandidates ? "ranked" : "audit";
   const tableRows = useMemo(() => {
@@ -236,20 +374,30 @@ export default function Timetable({ doc, direction }: ViewProps) {
     <Panel
       title="Competitor gap"
       headerAction={
-        <label className="control market-gaps-pair">
-          <span className="control-label">Pair</span>
-          <select value={pair?.pairId} onChange={(e) => setPairId(e.target.value)}>
-            {pairsWithSupply.map((p) => {
-              const lines = p.supplyVector?.detectedOverlappingLines?.length ?? 0;
-              const label = `${stopName(dir, p.originStopId)} → ${stopName(dir, p.destinationStopId)}`;
-              return (
-                <option key={p.pairId} value={p.pairId}>
-                  {lines ? label : `${label} (no BODS overlap)`}
-                </option>
-              );
-            })}
-          </select>
-        </label>
+        <div className="timetable-audit-source market-gaps-header">
+          <label className="control market-gaps-pair">
+            <span className="control-label">Pair</span>
+            <select value={pair?.pairId} onChange={(e) => setPairId(e.target.value)}>
+              {pairsWithSupply.map((p) => {
+                const lines = p.supplyVector?.detectedOverlappingLines?.length ?? 0;
+                const label = `${stopName(dir, p.originStopId)} → ${stopName(dir, p.destinationStopId)}`;
+                return (
+                  <option key={p.pairId} value={p.pairId}>
+                    {lines ? label : `${label} (no BODS overlap)`}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
+          <Seg
+            value={day}
+            onChange={setDay}
+            options={[
+              { value: "weekday", label: "Weekday", swatch: "var(--weekday)" },
+              { value: "weekend", label: "Weekend", swatch: "var(--weekend)" },
+            ]}
+          />
+        </div>
       }
     >
       {!supply ? (
@@ -297,29 +445,18 @@ export default function Timetable({ doc, direction }: ViewProps) {
   return (
     <>
       <Feedback
-        feedback="The proposed timetable was audited against competitor departures for unserved peak gaps and outbound/return pairings. Cumulative gap coverage rises quickly with the first services but flattens: see the audit table and headway map below for where each column lands and how much incremental value later departures add."
+        feedback="The competitor gap table surfaces market openings for each stop pair on the prposed route. An opening is a gap of ≥60 min in a peak traffic band where no competitor serves. The timetable audit scores each service against that supply. For the proposed timetable, gap coverage rises quickly on the first services, then flattens as later departures add little. Use time table audit table below to compare the proposed schedule with suggested service candidates."
         improvements={[
-          "The suggested improvement model identifies up to 12 candidate services to absorb all remaining market gaps; start operations with a lean schedule of 3 to 5 high-impact trips. Services S01, S04, and S05 account for the vast majority of peak gap hits. Cap initial launch frequency to protect operating margins and test real-world demand.",
-          "Shift departure and layover simulation steps from 15-minute to 1-minute intervals. Finer resolution will unlock tighter pairings, and align departures more precisely with peak demand windows.",
-          "Remove services like C07 and C08 that yield zero incremental gap coverage. Reallocate those vehicle hours toward intermediate peak windows where competitor gaps remain unserved.",
+          "Start new-route lean: launch with 3–5 high-impact services before scaling up. The suggested model ranks chainable round-trips by combined gap hits; the first few services capture most peak openings, while later slots add diminishing coverage. Gap presence does not equal demand — keep initial frequency tight to protect margins and validate real-world load.",
+          "Examine services yielding zero gap coverage: C07 and C08 service add zero incremental gap coverage, if timetable is to kept the same, reallocate those vehicle hours toward intermediate peak windows where competitor gaps remain unserved. Even small departure, layover and return time shifting could improve gap hit.",
+          "Initial launch: if the route opens with 5 services, prefer the suggested over the proposed timetable as they requires the same fleet size but has higher gap coverage while also has departures and leg times derived from traffic-band-adjusted running times.",
+          "Improve granularity: If the suggested model is sound, shift departure and layover simulation steps from 15-minute to 1-minute intervals. Finer resolution will unlock tighter pairings and align departures more precisely with peak demand windows.",
         ]}
         considerations={
           [
             {
               label: "Lookahead scheduling",
               text: "Suggested services are picked one at a time by gap coverage. A fuller model would choose the best set of departures together, balancing competitor gaps against how many buses are needed and whether outbound/return times chain cleanly on the same vehicle.",
-            },
-            {
-              label: "Layover search",
-              text: "For each outbound departure, vary layover length so the return lands in the strongest Edinburgh-side demand window, not only the fixed 45 / 60 / 75 / 90 minute options tested today.",
-            },
-            {
-              label: "Launch",
-              text: "Recalibrate proposed vs expected segment times using observed boarding and running times once departures are live.",
-            },
-            {
-              label: "Weekend running times",
-              text: "Score weekend columns against AM, off-peak and PM running times, not only a single mid-day traffic snapshot (weekend competitor + peak-filtered openings are scored today).",
             },
           ] satisfies ConsiderationItem[]
         }
@@ -330,12 +467,22 @@ export default function Timetable({ doc, direction }: ViewProps) {
         // sub={`${dayLabel} · ${competitorLabel} supply · gap hits per service column`}
         headerAction={
           <div className="timetable-audit-source">
+            {auditSource === "suggested" && slotCandidates.length > 0 && (
+              <label className="timetable-audit-show-candidates">
+                <input
+                  type="checkbox"
+                  checked={showAllCandidates}
+                  onChange={(e) => setShowAllCandidates(e.target.checked)}
+                />{" "}
+                Show all ranked options ({slotCandidates.length})
+              </label>
+            )}
             <Seg
               value={auditSource}
               onChange={setAuditSource}
               options={[
                 { value: "proposed", label: "Proposed" },
-                { value: "suggested", label: "Suggested Improvements" },
+                { value: "suggested", label: "Suggested scheduling" },
               ]}
             />
             <Seg
@@ -363,46 +510,42 @@ export default function Timetable({ doc, direction }: ViewProps) {
             {auditSource === "suggested" && (
               <Stat
                 compact
-                label="Suggested # of services"
-                value={slotSelected.length || "–"}
-                sub={slotMeta.stopReason?.replace(/_/g, " ") ?? "gap-ranked selection"}
+                label="Suggested # of services to launch"
+                value={`${LAUNCH_MIN}–${LAUNCH_MAX}`}
+                sub="start lean to test market demand"
               />
             )}
             <Stat
               compact
               label="Cumulative gap hits"
-              value={auditGapTotal != null ? num(auditGapTotal) : "–"}
+              value={
+                auditSource === "proposed"
+                  ? proposedGapTotal != null
+                    ? num(proposedGapTotal)
+                    : "–"
+                  : (suggestedLaunchHits?.range ?? "–")
+              }
               sub={
-                auditGapTotal != null
-                  ? `incremental vs ${competitorLabel}`
-                  : "pending timetable-selection step"
+                auditSource === "proposed"
+                  ? `first ${compareCount} services`
+                  : (suggestedLaunchHits?.sub ?? "–")
               }
             />
             <Stat
               compact
-              label="Vehicles"
+              label="Required vehicles"
               value={
-                auditSource === "suggested"
-                  ? (slotMeta.vehiclesRequired ?? "–")
-                  : (slotMeta.proposalVehicles ?? "–")
+                auditSource === "proposed"
+                  ? (proposedFleet?.range ?? "–")
+                  : (suggestedLaunchFleet?.range ?? "–")
               }
               sub={
-                auditSource === "suggested" && slotMeta.proposalVehicles != null
-                  ? `proposed uses ${slotMeta.proposalVehicles}`
-                  : "block scheduler"
+                auditSource === "proposed"
+                  ? (proposedFleet?.sub ?? "dependent on cable availability")
+                  : (suggestedLaunchFleet?.sub ?? "dependent on cable availability")
               }
             />
           </div>
-          {auditSource === "suggested" && slotCandidates.length > 0 && (
-            <label className="timetable-audit-show-candidates">
-              <input
-                type="checkbox"
-                checked={showAllCandidates}
-                onChange={(e) => setShowAllCandidates(e.target.checked)}
-              />{" "}
-              Show all ranked options ({slotCandidates.length})
-            </label>
-          )}
         </div>
         <div className="timetable-audit-table">
           {tableRows.length > 0 ? (
@@ -426,6 +569,34 @@ export default function Timetable({ doc, direction }: ViewProps) {
             </p>
           )}
         </div>
+      </Panel>
+      <Panel
+        title="Timetable proposal"
+        headerAction={
+          <Seg
+            value={timetableSource}
+            onChange={setTimetableSource}
+            options={[
+              { value: "proposed", label: "Proposed" },
+              { value: "suggested", label: "Suggested" },
+            ]}
+          />
+        }
+        tight
+      >
+        {timetableSource === "proposed" ? (
+          proposedGroupedBoard ? (
+            <TimetableGroupedGrid board={proposedGroupedBoard} />
+          ) : (
+            <p className="small muted">No proposed timetable in this scenario.</p>
+          )
+        ) : suggestedGroupedBoard ? (
+          <TimetableGroupedGrid board={suggestedGroupedBoard} />
+        ) : (
+          <p className="small muted">
+            Gap-ranked selection appears once supply and timetable-selection have run.
+          </p>
+        )}
       </Panel>
     </>
   );

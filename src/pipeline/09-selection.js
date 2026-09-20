@@ -22,7 +22,8 @@ import {
   greedySelect,
   bandForDeparture,
 } from "../domain/timetable-selection.js";
-import { rankStandaloneSlots, selectSlotsByGapHits } from "../domain/slot-ranking.js";
+import { rankStandaloneSlots } from "../domain/slot-ranking.js";
+import { selectSlotsByGapHitsWithChains } from "../domain/slot-chains.js";
 import { fitFleetCap } from "../domain/fleet-fit.js";
 import { peakBandsForDirection } from "../domain/market-openings.js";
 import { DEFAULT_DAY_START_MIN, DEFAULT_DAY_END_MIN } from "../domain/headway.js";
@@ -155,7 +156,14 @@ export async function run(ctx) {
       tw,
       dayType,
     });
-    const slotPick = selectSlotsByGapHits({
+    const chainFleetCtx = {
+      energyPerReturnKwh: fleetCtx.energyKwh,
+      vehicle: config.fleet.vehicle,
+      site: config.fleet.site,
+      deadOut: fleetCtx.deadOut,
+      deadIn: fleetCtx.deadIn,
+    };
+    const slotPick = selectSlotsByGapHitsWithChains({
       departureGrid: grid,
       layovers: sel.layoversMin,
       offsets,
@@ -166,6 +174,7 @@ export async function run(ctx) {
       minNewGapHits: sel.minNewGapHits,
       minSpacingMin: sel.minSpacingMin,
       dayType,
+      fleetCtx: chainFleetCtx,
     });
     const vehiclesFor = (cols) =>
       cols.length ? fleetCtx.vehiclesFor(cols.map(toSched)) : 0;
@@ -173,10 +182,13 @@ export async function run(ctx) {
       formatColumnRow(c, i, "S", {
         newGapHits: c.newGapHits,
         cumulativeGapHits: c.cumulativeGapHits,
+        vehicleDay: c.vehicleDay,
+        chainKind: c.chainKind,
+        chainLength: c.chainLength,
       }),
     );
     result[key].slotRanking = {
-      basis: `standalone gap-hit rank on ${supplyDay} BODS; K from incremental new pair hits (min ${sel.minNewGapHits}), spacing ≥ ${sel.minSpacingMin} min`,
+      basis: `chain-aware gap-hit selection on ${supplyDay} BODS: max combined gap hits, then max gap hits per chain (recharge-feasible pairs); min ${sel.minNewGapHits} new hits, spacing ≥ ${sel.minSpacingMin} min`,
       candidates: ranked.map((c, i) => formatColumnRow(c, i, "S", { rank: i + 1 })),
       selected: {
         columns: selectedCols,

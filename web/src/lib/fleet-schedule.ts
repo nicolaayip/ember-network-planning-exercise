@@ -69,13 +69,12 @@ export function scheduleBlocks(input: EngineScheduleInput): FleetScenario {
   return toFleetScenario(engineScheduleBlocks(input), input.vehicle.batteryKwh);
 }
 
-export function scheduleFleetScenario(
-  doc: EngineDocument,
+function scheduleFleetColumnsInternal(
   fleet: Fleet,
+  columns: ScheduleColumn[],
   scenario: ScenarioName,
   maxCablesPerVehicle: 1 | 2,
 ) {
-  const columns = fleetColumns(doc);
   const energyKwh = fleet.energy?.[scenario]?.energyKwh;
   if (!columns.length || !isNum(energyKwh)) return null;
 
@@ -91,4 +90,42 @@ export function scheduleFleetScenario(
     site: fleetSite(fleet, maxCablesPerVehicle),
     slotMinutes,
   });
+}
+
+/** Block-scheduler vehicle count for an arbitrary column set (same model as Fleet tab). */
+export function scheduleFleetColumns(
+  fleet: Fleet,
+  columns: ScheduleColumn[],
+  scenario: ScenarioName,
+  maxCablesPerVehicle: 1 | 2,
+) {
+  return scheduleFleetColumnsInternal(fleet, columns, scenario, maxCablesPerVehicle);
+}
+
+export function fleetVehicleRange(
+  fleet: Fleet,
+  columns: ScheduleColumn[],
+  scenario: ScenarioName = "central",
+) {
+  const oneCable = scheduleFleetColumnsInternal(fleet, columns, scenario, 1)?.vehiclesRequired;
+  const twoCable = scheduleFleetColumnsInternal(fleet, columns, scenario, 2)?.vehiclesRequired;
+  if (!isNum(oneCable) && !isNum(twoCable)) return null;
+  const counts = [oneCable, twoCable].filter(isNum);
+  const min = Math.min(...counts);
+  const max = Math.max(...counts);
+  const range = min === max ? String(min) : `${min}–${max}`;
+  const sub =
+    isNum(oneCable) && isNum(twoCable)
+      ? `${twoCable} with 2 cables, ${oneCable} with 1`
+      : "dependent on cable availability";
+  return { range, sub, min, max };
+}
+
+export function scheduleFleetScenario(
+  doc: EngineDocument,
+  fleet: Fleet,
+  scenario: ScenarioName,
+  maxCablesPerVehicle: 1 | 2,
+) {
+  return scheduleFleetColumnsInternal(fleet, fleetColumns(doc), scenario, maxCablesPerVehicle);
 }

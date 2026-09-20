@@ -399,7 +399,7 @@ export default function FleetView({ doc }: ViewProps) {
   return (
     <>
       <Feedback
-        feedback="The model simulates four energy scenarios for the proposed route, each with a different consumption rate per km. Real draw depends on route makeup, distance, and seasonal change. In the low scenario, the route is feasible with margin, at breakeven, there remains a 10% buffer on final return to depot; central falls just above the buffer threshold and high makes the route infeasible."
+        feedback="The model simulates 4 energy scenarios for the proposed route, each with a different consumption rate per km. Real draw depends on route makeup, distance, and seasonal change. In the low scenario, the route is feasible with margin, at breakeven, there remains a 10% buffer on final return to depot; central falls just above the buffer threshold and high makes the route infeasible."
         improvementsTitle="Suggestions"
         improvements={[
           "Treat the central consumption scenario as the planning case, worthwhile to do a real-world run or use existing company data to make better estimations of consumption rate for the route. Route length might have to be reduced to make more margin for service launching in winter season.",

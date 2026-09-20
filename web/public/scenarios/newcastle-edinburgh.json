@@ -47475,7 +47475,7 @@
         "basis": "timetabled departure times at each stop (proposedTimes); weekday BODS competitors; peak-filtered openings"
       },
       "slotRanking": {
-        "basis": "standalone gap-hit rank on weekday BODS; K from incremental new pair hits (min 5), spacing ≥ 60 min",
+        "basis": "chain-aware gap-hit selection on weekday BODS: max combined gap hits, then max gap hits per chain (recharge-feasible pairs); min 5 new hits, spacing ≥ 60 min",
         "candidates": [
           {
             "rank": 1,
@@ -51656,7 +51656,10 @@
               "outboundPairsInOpenings": 112,
               "returnPairsInOpenings": 128,
               "newGapHits": 240,
-              "cumulativeGapHits": 240
+              "cumulativeGapHits": 240,
+              "vehicleDay": 1,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 2,
@@ -51674,7 +51677,10 @@
               "outboundPairsInOpenings": 21,
               "returnPairsInOpenings": 19,
               "newGapHits": 40,
-              "cumulativeGapHits": 280
+              "cumulativeGapHits": 280,
+              "vehicleDay": 2,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 3,
@@ -51692,7 +51698,10 @@
               "outboundPairsInOpenings": 25,
               "returnPairsInOpenings": 0,
               "newGapHits": 25,
-              "cumulativeGapHits": 305
+              "cumulativeGapHits": 305,
+              "vehicleDay": 3,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 4,
@@ -51710,7 +51719,10 @@
               "outboundPairsInOpenings": 68,
               "returnPairsInOpenings": 97,
               "newGapHits": 165,
-              "cumulativeGapHits": 470
+              "cumulativeGapHits": 470,
+              "vehicleDay": 4,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 5,
@@ -51728,7 +51740,10 @@
               "outboundPairsInOpenings": 122,
               "returnPairsInOpenings": 0,
               "newGapHits": 122,
-              "cumulativeGapHits": 592
+              "cumulativeGapHits": 592,
+              "vehicleDay": 5,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 6,
@@ -51746,7 +51761,10 @@
               "outboundPairsInOpenings": 23,
               "returnPairsInOpenings": 67,
               "newGapHits": 90,
-              "cumulativeGapHits": 682
+              "cumulativeGapHits": 682,
+              "vehicleDay": 6,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 7,
@@ -51764,7 +51782,10 @@
               "outboundPairsInOpenings": 68,
               "returnPairsInOpenings": 0,
               "newGapHits": 68,
-              "cumulativeGapHits": 750
+              "cumulativeGapHits": 750,
+              "vehicleDay": 7,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 8,
@@ -51782,7 +51803,10 @@
               "outboundPairsInOpenings": 33,
               "returnPairsInOpenings": 16,
               "newGapHits": 49,
-              "cumulativeGapHits": 799
+              "cumulativeGapHits": 799,
+              "vehicleDay": 8,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 9,
@@ -51800,7 +51824,10 @@
               "outboundPairsInOpenings": 24,
               "returnPairsInOpenings": 0,
               "newGapHits": 24,
-              "cumulativeGapHits": 823
+              "cumulativeGapHits": 823,
+              "vehicleDay": 9,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 10,
@@ -51818,7 +51845,10 @@
               "outboundPairsInOpenings": 22,
               "returnPairsInOpenings": 0,
               "newGapHits": 22,
-              "cumulativeGapHits": 845
+              "cumulativeGapHits": 845,
+              "vehicleDay": 10,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 11,
@@ -51836,7 +51866,10 @@
               "outboundPairsInOpenings": 6,
               "returnPairsInOpenings": 15,
               "newGapHits": 21,
-              "cumulativeGapHits": 866
+              "cumulativeGapHits": 866,
+              "vehicleDay": 11,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 12,
@@ -51854,70 +51887,97 @@
               "outboundPairsInOpenings": 3,
               "returnPairsInOpenings": 14,
               "newGapHits": 17,
-              "cumulativeGapHits": 883
+              "cumulativeGapHits": 883,
+              "vehicleDay": 12,
+              "chainKind": "single",
+              "chainLength": 1
             }
           ],
           "vehiclesRequired": 10,
           "curve": [
             {
               "n": 1,
+              "vehicleDays": 1,
               "newHits": 240,
-              "cumulativeHits": 240
+              "cumulativeHits": 240,
+              "kind": "single"
             },
             {
               "n": 2,
+              "vehicleDays": 2,
               "newHits": 40,
-              "cumulativeHits": 280
+              "cumulativeHits": 280,
+              "kind": "single"
             },
             {
               "n": 3,
+              "vehicleDays": 3,
               "newHits": 25,
-              "cumulativeHits": 305
+              "cumulativeHits": 305,
+              "kind": "single"
             },
             {
               "n": 4,
+              "vehicleDays": 4,
               "newHits": 165,
-              "cumulativeHits": 470
+              "cumulativeHits": 470,
+              "kind": "single"
             },
             {
               "n": 5,
+              "vehicleDays": 5,
               "newHits": 122,
-              "cumulativeHits": 592
+              "cumulativeHits": 592,
+              "kind": "single"
             },
             {
               "n": 6,
+              "vehicleDays": 6,
               "newHits": 90,
-              "cumulativeHits": 682
+              "cumulativeHits": 682,
+              "kind": "single"
             },
             {
               "n": 7,
+              "vehicleDays": 7,
               "newHits": 68,
-              "cumulativeHits": 750
+              "cumulativeHits": 750,
+              "kind": "single"
             },
             {
               "n": 8,
+              "vehicleDays": 8,
               "newHits": 49,
-              "cumulativeHits": 799
+              "cumulativeHits": 799,
+              "kind": "single"
             },
             {
               "n": 9,
+              "vehicleDays": 9,
               "newHits": 24,
-              "cumulativeHits": 823
+              "cumulativeHits": 823,
+              "kind": "single"
             },
             {
               "n": 10,
+              "vehicleDays": 10,
               "newHits": 22,
-              "cumulativeHits": 845
+              "cumulativeHits": 845,
+              "kind": "single"
             },
             {
               "n": 11,
+              "vehicleDays": 11,
               "newHits": 21,
-              "cumulativeHits": 866
+              "cumulativeHits": 866,
+              "kind": "single"
             },
             {
               "n": 12,
+              "vehicleDays": 12,
               "newHits": 17,
-              "cumulativeHits": 883
+              "cumulativeHits": 883,
+              "kind": "single"
             }
           ],
           "stopReason": "max_columns"
@@ -51939,11 +51999,11 @@
               "outbound": "peak1",
               "return": "peak1"
             },
-            "marginalGain": 1.5159,
-            "cumulative": 1.5159,
             "pairsInOpenings": 238,
             "outboundPairsInOpenings": 110,
-            "returnPairsInOpenings": 128
+            "returnPairsInOpenings": 128,
+            "marginalGain": 1.5159,
+            "cumulative": 1.5159
           },
           {
             "columnId": "R02",
@@ -51956,11 +52016,11 @@
               "outbound": "peak1",
               "return": "peak1"
             },
-            "marginalGain": 0.0091,
-            "cumulative": 1.5251,
             "pairsInOpenings": 46,
             "outboundPairsInOpenings": 27,
-            "returnPairsInOpenings": 19
+            "returnPairsInOpenings": 19,
+            "marginalGain": 0.0091,
+            "cumulative": 1.5251
           },
           {
             "columnId": "R03",
@@ -51973,11 +52033,11 @@
               "outbound": "peak2",
               "return": "peak1"
             },
-            "marginalGain": 0.0089,
-            "cumulative": 1.5339,
             "pairsInOpenings": 25,
             "outboundPairsInOpenings": 25,
-            "returnPairsInOpenings": 0
+            "returnPairsInOpenings": 0,
+            "marginalGain": 0.0089,
+            "cumulative": 1.5339
           },
           {
             "columnId": "R04",
@@ -51990,11 +52050,11 @@
               "outbound": "peak1",
               "return": "peak1"
             },
-            "marginalGain": 1.0515,
-            "cumulative": 2.5854,
             "pairsInOpenings": 119,
             "outboundPairsInOpenings": 41,
-            "returnPairsInOpenings": 78
+            "returnPairsInOpenings": 78,
+            "marginalGain": 1.0515,
+            "cumulative": 2.5854
           },
           {
             "columnId": "R05",
@@ -52007,11 +52067,11 @@
               "outbound": "peak1",
               "return": "peak1"
             },
-            "marginalGain": 0.7672,
-            "cumulative": 3.3526,
             "pairsInOpenings": 192,
             "outboundPairsInOpenings": 85,
-            "returnPairsInOpenings": 107
+            "returnPairsInOpenings": 107,
+            "marginalGain": 0.7672,
+            "cumulative": 3.3526
           },
           {
             "columnId": "R06",
@@ -52024,11 +52084,11 @@
               "outbound": "valley1",
               "return": "peak1"
             },
-            "marginalGain": 0.393,
-            "cumulative": 3.7456,
             "pairsInOpenings": 57,
             "outboundPairsInOpenings": 41,
-            "returnPairsInOpenings": 16
+            "returnPairsInOpenings": 16,
+            "marginalGain": 0.393,
+            "cumulative": 3.7456
           },
           {
             "columnId": "R07",
@@ -52041,11 +52101,11 @@
               "outbound": "peak2",
               "return": "peak1"
             },
-            "marginalGain": 0.3492,
-            "cumulative": 4.0948,
             "pairsInOpenings": 122,
             "outboundPairsInOpenings": 122,
-            "returnPairsInOpenings": 0
+            "returnPairsInOpenings": 0,
+            "marginalGain": 0.3492,
+            "cumulative": 4.0948
           },
           {
             "columnId": "R08",
@@ -52058,11 +52118,11 @@
               "outbound": "valley1",
               "return": "peak1"
             },
-            "marginalGain": 0.3134,
-            "cumulative": 4.4082,
             "pairsInOpenings": 55,
             "outboundPairsInOpenings": 12,
-            "returnPairsInOpenings": 43
+            "returnPairsInOpenings": 43,
+            "marginalGain": 0.3134,
+            "cumulative": 4.4082
           },
           {
             "columnId": "R09",
@@ -52075,11 +52135,11 @@
               "outbound": "peak2",
               "return": "peak1"
             },
-            "marginalGain": 0.0081,
-            "cumulative": 4.4163,
             "pairsInOpenings": 24,
             "outboundPairsInOpenings": 24,
-            "returnPairsInOpenings": 0
+            "returnPairsInOpenings": 0,
+            "marginalGain": 0.0081,
+            "cumulative": 4.4163
           }
         ],
         "curve": [
@@ -52145,11 +52205,11 @@
                 "outbound": "peak1",
                 "return": "peak1"
               },
-              "marginalGain": 1.5159,
-              "cumulative": 1.5159,
               "pairsInOpenings": 238,
               "outboundPairsInOpenings": 110,
-              "returnPairsInOpenings": 128
+              "returnPairsInOpenings": 128,
+              "marginalGain": 1.5159,
+              "cumulative": 1.5159
             },
             {
               "columnId": "R04",
@@ -52162,11 +52222,11 @@
                 "outbound": "peak1",
                 "return": "peak1"
               },
-              "marginalGain": 1.0515,
-              "cumulative": 2.5854,
               "pairsInOpenings": 119,
               "outboundPairsInOpenings": 41,
-              "returnPairsInOpenings": 78
+              "returnPairsInOpenings": 78,
+              "marginalGain": 1.0515,
+              "cumulative": 2.5854
             },
             {
               "columnId": "R05",
@@ -52179,11 +52239,11 @@
                 "outbound": "peak1",
                 "return": "peak1"
               },
-              "marginalGain": 0.7672,
-              "cumulative": 3.3526,
               "pairsInOpenings": 192,
               "outboundPairsInOpenings": 85,
-              "returnPairsInOpenings": 107
+              "returnPairsInOpenings": 107,
+              "marginalGain": 0.7672,
+              "cumulative": 3.3526
             },
             {
               "columnId": "R06",
@@ -52196,11 +52256,11 @@
                 "outbound": "valley1",
                 "return": "peak1"
               },
-              "marginalGain": 0.393,
-              "cumulative": 3.7456,
               "pairsInOpenings": 57,
               "outboundPairsInOpenings": 41,
-              "returnPairsInOpenings": 16
+              "returnPairsInOpenings": 16,
+              "marginalGain": 0.393,
+              "cumulative": 3.7456
             },
             {
               "columnId": "R07",
@@ -52213,11 +52273,11 @@
                 "outbound": "peak2",
                 "return": "peak1"
               },
-              "marginalGain": 0.3492,
-              "cumulative": 4.0948,
               "pairsInOpenings": 122,
               "outboundPairsInOpenings": 122,
-              "returnPairsInOpenings": 0
+              "returnPairsInOpenings": 0,
+              "marginalGain": 0.3492,
+              "cumulative": 4.0948
             },
             {
               "columnId": "R08",
@@ -52230,11 +52290,11 @@
                 "outbound": "valley1",
                 "return": "peak1"
               },
-              "marginalGain": 0.3134,
-              "cumulative": 4.4082,
               "pairsInOpenings": 55,
               "outboundPairsInOpenings": 12,
-              "returnPairsInOpenings": 43
+              "returnPairsInOpenings": 43,
+              "marginalGain": 0.3134,
+              "cumulative": 4.4082
             }
           ],
           "cumulative": 4.3902,
@@ -52419,7 +52479,7 @@
         "basis": "timetabled departure times at each stop (proposedTimes); Saturday BODS competitors; weekend peak-filtered openings"
       },
       "slotRanking": {
-        "basis": "standalone gap-hit rank on saturday BODS; K from incremental new pair hits (min 5), spacing ≥ 60 min",
+        "basis": "chain-aware gap-hit selection on saturday BODS: max combined gap hits, then max gap hits per chain (recharge-feasible pairs); min 5 new hits, spacing ≥ 60 min",
         "candidates": [
           {
             "rank": 1,
@@ -56600,7 +56660,10 @@
               "outboundPairsInOpenings": 106,
               "returnPairsInOpenings": 88,
               "newGapHits": 194,
-              "cumulativeGapHits": 194
+              "cumulativeGapHits": 194,
+              "vehicleDay": 1,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 2,
@@ -56618,7 +56681,10 @@
               "outboundPairsInOpenings": 17,
               "returnPairsInOpenings": 0,
               "newGapHits": 17,
-              "cumulativeGapHits": 211
+              "cumulativeGapHits": 211,
+              "vehicleDay": 2,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 3,
@@ -56636,7 +56702,10 @@
               "outboundPairsInOpenings": 17,
               "returnPairsInOpenings": 0,
               "newGapHits": 17,
-              "cumulativeGapHits": 228
+              "cumulativeGapHits": 228,
+              "vehicleDay": 3,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 4,
@@ -56654,7 +56723,10 @@
               "outboundPairsInOpenings": 17,
               "returnPairsInOpenings": 0,
               "newGapHits": 17,
-              "cumulativeGapHits": 245
+              "cumulativeGapHits": 245,
+              "vehicleDay": 4,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 5,
@@ -56672,7 +56744,10 @@
               "outboundPairsInOpenings": 17,
               "returnPairsInOpenings": 0,
               "newGapHits": 17,
-              "cumulativeGapHits": 262
+              "cumulativeGapHits": 262,
+              "vehicleDay": 5,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 6,
@@ -56690,7 +56765,10 @@
               "outboundPairsInOpenings": 17,
               "returnPairsInOpenings": 0,
               "newGapHits": 17,
-              "cumulativeGapHits": 279
+              "cumulativeGapHits": 279,
+              "vehicleDay": 6,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 7,
@@ -56708,7 +56786,10 @@
               "outboundPairsInOpenings": 0,
               "returnPairsInOpenings": 13,
               "newGapHits": 13,
-              "cumulativeGapHits": 292
+              "cumulativeGapHits": 292,
+              "vehicleDay": 7,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 8,
@@ -56726,7 +56807,10 @@
               "outboundPairsInOpenings": 50,
               "returnPairsInOpenings": 108,
               "newGapHits": 158,
-              "cumulativeGapHits": 450
+              "cumulativeGapHits": 450,
+              "vehicleDay": 8,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 9,
@@ -56744,7 +56828,10 @@
               "outboundPairsInOpenings": 12,
               "returnPairsInOpenings": 118,
               "newGapHits": 130,
-              "cumulativeGapHits": 580
+              "cumulativeGapHits": 580,
+              "vehicleDay": 9,
+              "chainKind": "single",
+              "chainLength": 1
             },
             {
               "rank": 10,
@@ -56762,60 +56849,83 @@
               "outboundPairsInOpenings": 12,
               "returnPairsInOpenings": 0,
               "newGapHits": 12,
-              "cumulativeGapHits": 592
+              "cumulativeGapHits": 592,
+              "vehicleDay": 10,
+              "chainKind": "single",
+              "chainLength": 1
             }
           ],
           "vehiclesRequired": 8,
           "curve": [
             {
               "n": 1,
+              "vehicleDays": 1,
               "newHits": 194,
-              "cumulativeHits": 194
+              "cumulativeHits": 194,
+              "kind": "single"
             },
             {
               "n": 2,
+              "vehicleDays": 2,
               "newHits": 17,
-              "cumulativeHits": 211
+              "cumulativeHits": 211,
+              "kind": "single"
             },
             {
               "n": 3,
+              "vehicleDays": 3,
               "newHits": 17,
-              "cumulativeHits": 228
+              "cumulativeHits": 228,
+              "kind": "single"
             },
             {
               "n": 4,
+              "vehicleDays": 4,
               "newHits": 17,
-              "cumulativeHits": 245
+              "cumulativeHits": 245,
+              "kind": "single"
             },
             {
               "n": 5,
+              "vehicleDays": 5,
               "newHits": 17,
-              "cumulativeHits": 262
+              "cumulativeHits": 262,
+              "kind": "single"
             },
             {
               "n": 6,
+              "vehicleDays": 6,
               "newHits": 17,
-              "cumulativeHits": 279
+              "cumulativeHits": 279,
+              "kind": "single"
             },
             {
               "n": 7,
+              "vehicleDays": 7,
               "newHits": 13,
-              "cumulativeHits": 292
+              "cumulativeHits": 292,
+              "kind": "single"
             },
             {
               "n": 8,
+              "vehicleDays": 8,
               "newHits": 158,
-              "cumulativeHits": 450
+              "cumulativeHits": 450,
+              "kind": "single"
             },
             {
               "n": 9,
+              "vehicleDays": 9,
               "newHits": 130,
-              "cumulativeHits": 580
+              "cumulativeHits": 580,
+              "kind": "single"
             },
             {
               "n": 10,
+              "vehicleDays": 10,
               "newHits": 12,
-              "cumulativeHits": 592
+              "cumulativeHits": 592,
+              "kind": "single"
             }
           ],
           "stopReason": "min_new_gap_hits"
@@ -56837,11 +56947,11 @@
               "outbound": "weekend",
               "return": "weekend"
             },
-            "marginalGain": 1.4925,
-            "cumulative": 1.4925,
             "pairsInOpenings": 189,
             "outboundPairsInOpenings": 122,
-            "returnPairsInOpenings": 67
+            "returnPairsInOpenings": 67,
+            "marginalGain": 1.4925,
+            "cumulative": 1.4925
           }
         ],
         "curve": [
@@ -56867,11 +56977,11 @@
                 "outbound": "weekend",
                 "return": "weekend"
               },
-              "marginalGain": 1.4925,
-              "cumulative": 1.4925,
               "pairsInOpenings": 189,
               "outboundPairsInOpenings": 122,
-              "returnPairsInOpenings": 67
+              "returnPairsInOpenings": 67,
+              "marginalGain": 1.4925,
+              "cumulative": 1.4925
             }
           ],
           "cumulative": 1.4925,
@@ -57990,5 +58100,5 @@
       "section": "§5.4"
     }
   ],
-  "generatedAt": "2026-09-20T03:04:24.733Z"
+  "generatedAt": "2026-09-20T16:41:18.681Z"
 }

@@ -213,23 +213,18 @@ export default function Legs({ doc, direction }: ViewProps) {
     <>
       <Feedback
         feedback={
-          "The proposed end-to-end allowance is stress-tested below against free-flow and each traffic window on every segment. The schedule looks overoptimistic under realistic coach constraints: long vehicles, road-type speed limits, and mandatory limiters cap achievable speeds below what a flat car-based allowance implies. Every leg is under-scheduled relative to modelled coach time, with the worst gaps on single-carriageway links. A single flat timetable ignores the distinct traffic windows the corridor shows."
+          "A traffic profile is built at locations close to outbound and return origin of the proposed route. This is used so end-to-end allowance of the proposed timetable can be stress-tested against free-flow scenerio and each traffic window. The table below breaks the analysis into leg segments. Overall, the schedule looks overoptimistic under realistic coach constraints: long vehicles, road-type speed limits, and mandatory limiters cap achievable speeds below what a flat car-based allowance implies. Every leg is under-scheduled relative to modelled coach time, with the worst gaps on single-carriageway links. The proposed single flat timetable ignores the distinct traffic windows the corridor shows."
         }
         improvements={[
-          "Recalibrate the timetable around realistic vehicle capabilities, rules imposed on the vehicle type assigned for the route (which is over 12m), and road type speed limits.",
-          "Shift away from a single flat timetable and propose distinct schedules tailored to identified WebTRIS traffic windows",
-          "Ensure per-stop dwell allocations are explicitly budgeted into schedules.",
-          "Consider applying variable dwell times with longer dwell at key hubs and shorter dwell at rural stops rather than a flat per-stop dwell across the board.",
+          "Factor speed-limitations imposed on vehicle: Recalibrate the timetable around rules imposed on the vehicle type assigned for the route (which is over 12m), and road type speed limits.",
+          "Build timetable per traffic window: Shift away from a single flat timetable and propose distinct schedules tailored to identified WebTRIS traffic windows",
+          "Variable dwells: Consider applying variable dwell times with longer dwell at key hubs and shorter dwell at rural stops rather than a flat per-stop dwell across the board.",
         ]}
         considerations={
           [
             {
               label: "Launch period",
-              text: "Use the actual route application date for season-aligned windows instead of today's estimated launch date buffer",
-            },
-            {
-              label: "Scottish vehicle counts",
-              text: "Use Transport Scotland NTDS counts data for the A1 north of the border rather than proxying English WebTRIS on the whole corridor.",
+              text: "Use the actual route application date to build season-aligned traffic windows instead of today's estimated launch date buffer",
             },
             {
               label: "Traffic data window",
@@ -240,8 +235,12 @@ export default function Legs({ doc, direction }: ViewProps) {
               text: "Traffic windows are detected from local maxima on the traffic profile, with band edges at 80% of peak height today. Tune detection sensitivity to improve accuracy.",
             },
             {
+              label: "Scottish vehicle counts",
+              text: "Use Transport Scotland NTDS counts data for the A1 north of the border rather than proxying English WebTRIS on the whole corridor.",
+            },
+            {
               label: "Bank holidays",
-              text: "Treat major holidays as specific dates with their own schedule by pulling historic traffic patterns for those days.",
+              text: "Pull historic traffic patterns for major holidays, if traffic profile is meaningfully different, treat those days as specific dates with their own schedule.",
             },
             {
               label: "Bus lanes",

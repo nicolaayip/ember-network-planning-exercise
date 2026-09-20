@@ -143,12 +143,12 @@ export default function RouteStops({ doc, pins, direction }: ViewProps) {
       title: "KMZ placemark for this direction.",
       render: kmzNameCell,
     },
-    {
-      key: "align",
-      header: "Pin alignment",
-      title: `Distance from the KMZ placemark to the NaPTAN stop the engine uses. Within ${KMZ_ALIGN_M} m is treated as aligned.`,
-      render: alignCell,
-    },
+    // {
+    //   key: "align",
+    //   header: "Pin alignment",
+    //   title: `Distance from the KMZ placemark to the NaPTAN stop the engine uses. Within ${KMZ_ALIGN_M} m is treated as aligned.`,
+    //   render: alignCell,
+    // },
     { key: "atco", header: "ATCO", render: (s) => <code>{s.naptanId}</code> },
     {
       key: "dev",

@@ -306,16 +306,12 @@ export default function Timetable({ doc, direction }: ViewProps) {
         considerations={
           [
             {
-              label: "Fleet-fit subset search",
-              text: "Step 2 fleet-fit: re-score discovered columns standalone (not greedy pick-order marginals), then choose the highest-demand subset that fits the fleet cap via exhaustive search + block scheduler. Avoids dropping a weak second pick that still pairs well in the Gantt.",
-            },
-            {
               label: "Lookahead scheduling",
-              text: "Candidate services are added sequentially based on greedy individual rank. Implementing a forward-looking optimization model would evaluate full schedule combinations and prevent early trip selections from blocking superior downstream vehicle pairings.",
+              text: "Suggested services are picked one at a time by gap coverage. A fuller model would choose the best set of departures together, balancing competitor gaps against how many buses are needed and whether outbound/return times chain cleanly on the same vehicle.",
             },
             {
               label: "Layover search",
-              text: "Per outbound departure, search layover length so the return leg lands in the best far-end market opening (design doc layover lever), not only a fixed {45, 60, 75, 90} min grid.",
+              text: "For each outbound departure, vary layover length so the return lands in the strongest Edinburgh-side demand window, not only the fixed 45 / 60 / 75 / 90 minute options tested today.",
             },
             {
               label: "Launch",

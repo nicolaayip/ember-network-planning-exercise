@@ -514,11 +514,12 @@ export default function FleetView({ doc }: ViewProps) {
               },
               {
                 key: "f",
-                header: "Scenario feasible",
-                title: "break-even row is exactly at the 90% planning limit",
+                header: "10% buffer remains",
+                title:
+                  "Whether return SoC stays at or above the 10% reserve floor after one outbound + return; break-even row sits exactly on that limit",
                 render: (r) =>
                   r.s === "break-even" ? (
-                    <Badge kind="neutral">limit</Badge>
+                    <Badge kind="neutral">At limit</Badge>
                   ) : r.feasible == null ? (
                     "–"
                   ) : r.feasible ? (

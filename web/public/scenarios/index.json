@@ -1,0 +1,9 @@
+[
+  {
+    "id": "newcastle-edinburgh",
+    "label": "Newcastle – Edinburgh (A1) — evaluate",
+    "file": "scenarios/newcastle-edinburgh.json",
+    "pins": "reference/newcastle_edinburgh_routemap.pins.json",
+    "description": "Mon - Sun; 8 columns"
+  }
+]

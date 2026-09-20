@@ -1,0 +1,30 @@
+{
+  "name": "ember",
+  "version": "0.1.0",
+  "description": "Flexible intercity coach demand & timetable optimisation engine",
+  "type": "module",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/cli.js",
+    "test": "node --test test/",
+    "test:watch": "node --test --watch test/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@turf/turf": "^7.4.0",
+    "adm-zip": "^0.6.1",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "axios": "^1.20.0",
+    "csv-parse": "^7.0.2",
+    "dotenv": "^17.4.2",
+    "proj4": "^2.20.2",
+    "xlsx": "^0.18.5",
+    "xml2js": "^0.6.2"
+  }
+}

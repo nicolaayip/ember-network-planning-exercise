@@ -1,0 +1,257 @@
+{
+ "source": "data/task/newcastle_edinburgh_routemap.kmz",
+ "pins": [
+  {
+   "layer": "Outbound",
+   "seq": 0,
+   "name": "Newcastle Depot",
+   "lng": -1.6564482,
+   "lat": 54.9597522
+  },
+  {
+   "layer": "Outbound",
+   "seq": 1,
+   "name": "Newcastle Station",
+   "lng": -1.6186148,
+   "lat": 54.9688607
+  },
+  {
+   "layer": "Outbound",
+   "seq": 2,
+   "name": "Morpeth Loansdean",
+   "lng": -1.688899,
+   "lat": 55.1532323
+  },
+  {
+   "layer": "Outbound",
+   "seq": 3,
+   "name": "Morpeth Town Centre",
+   "lng": -1.686343,
+   "lat": 55.16567
+  },
+  {
+   "layer": "Outbound",
+   "seq": 4,
+   "name": "Morpeth Northgate",
+   "lng": -1.7115999,
+   "lat": 55.1785425
+  },
+  {
+   "layer": "Outbound",
+   "seq": 5,
+   "name": "Tritlington",
+   "lng": -1.7060372,
+   "lat": 55.2251666
+  },
+  {
+   "layer": "Outbound",
+   "seq": 6,
+   "name": "Alnwick",
+   "lng": -1.6951006,
+   "lat": 55.4008648
+  },
+  {
+   "layer": "Outbound",
+   "seq": 7,
+   "name": "North Charlton",
+   "lng": -1.7338158,
+   "lat": 55.5012816
+  },
+  {
+   "layer": "Outbound",
+   "seq": 8,
+   "name": "Belford",
+   "lng": -1.8287966,
+   "lat": 55.5994401
+  },
+  {
+   "layer": "Outbound",
+   "seq": 9,
+   "name": "Haggerston",
+   "lng": -1.941043,
+   "lat": 55.6865912
+  },
+  {
+   "layer": "Outbound",
+   "seq": 10,
+   "name": "Berwick-upon-Tweed",
+   "lng": -2.0118527,
+   "lat": 55.765991
+  },
+  {
+   "layer": "Outbound",
+   "seq": 11,
+   "name": "Burnmouth",
+   "lng": -2.0745812,
+   "lat": 55.8395858
+  },
+  {
+   "layer": "Outbound",
+   "seq": 12,
+   "name": "Houndwood",
+   "lng": -2.2551485,
+   "lat": 55.86763
+  },
+  {
+   "layer": "Outbound",
+   "seq": 13,
+   "name": "Dunbar",
+   "lng": -2.512489,
+   "lat": 55.9895807
+  },
+  {
+   "layer": "Outbound",
+   "seq": 14,
+   "name": "East Linton",
+   "lng": -2.6556048,
+   "lat": 55.9852062
+  },
+  {
+   "layer": "Outbound",
+   "seq": 15,
+   "name": "Haddington",
+   "lng": -2.782671,
+   "lat": 55.9552923
+  },
+  {
+   "layer": "Outbound",
+   "seq": 16,
+   "name": "Prestonpans",
+   "lng": -2.9513289,
+   "lat": 55.9552275
+  },
+  {
+   "layer": "Outbound",
+   "seq": 17,
+   "name": "Edinburgh George Street",
+   "lng": -3.1954919,
+   "lat": 55.9539406
+  },
+  {
+   "layer": "Return",
+   "seq": 0,
+   "name": "Edinburgh George Street",
+   "lng": -3.1954919,
+   "lat": 55.9539406
+  },
+  {
+   "layer": "Return",
+   "seq": 1,
+   "name": "Prestonpans",
+   "lng": -2.9513289,
+   "lat": 55.9552275
+  },
+  {
+   "layer": "Return",
+   "seq": 2,
+   "name": "Haddington",
+   "lng": -2.7810241,
+   "lat": 55.9555551
+  },
+  {
+   "layer": "Return",
+   "seq": 3,
+   "name": "East Linton",
+   "lng": -2.6554465,
+   "lat": 55.9853517
+  },
+  {
+   "layer": "Return",
+   "seq": 4,
+   "name": "Dunbar",
+   "lng": -2.512489,
+   "lat": 55.9895807
+  },
+  {
+   "layer": "Return",
+   "seq": 5,
+   "name": "Houndwood",
+   "lng": -2.2558003,
+   "lat": 55.8674027
+  },
+  {
+   "layer": "Return",
+   "seq": 6,
+   "name": "Burnmouth",
+   "lng": -2.0769523,
+   "lat": 55.8418027
+  },
+  {
+   "layer": "Return",
+   "seq": 7,
+   "name": "Berwick-upon-Tweed",
+   "lng": -2.0122067,
+   "lat": 55.7662052
+  },
+  {
+   "layer": "Return",
+   "seq": 8,
+   "name": "Haggerston",
+   "lng": -1.9388919,
+   "lat": 55.6857959
+  },
+  {
+   "layer": "Return",
+   "seq": 9,
+   "name": "Belford",
+   "lng": -1.8286115,
+   "lat": 55.5992992
+  },
+  {
+   "layer": "Return",
+   "seq": 10,
+   "name": "North Charlton",
+   "lng": -1.7336926,
+   "lat": 55.5019797
+  },
+  {
+   "layer": "Return",
+   "seq": 11,
+   "name": "Alnwick",
+   "lng": -1.6951006,
+   "lat": 55.4008648
+  },
+  {
+   "layer": "Return",
+   "seq": 12,
+   "name": "Tritlington",
+   "lng": -1.7055329,
+   "lat": 55.2258642
+  },
+  {
+   "layer": "Return",
+   "seq": 13,
+   "name": "Morpeth Northgate",
+   "lng": -1.711911,
+   "lat": 55.178665
+  },
+  {
+   "layer": "Return",
+   "seq": 14,
+   "name": "Morpeth Town Centre",
+   "lng": -1.6859299,
+   "lat": 55.16531
+  },
+  {
+   "layer": "Return",
+   "seq": 15,
+   "name": "Morpeth Loansdean",
+   "lng": -1.6880139,
+   "lat": 55.1524231
+  },
+  {
+   "layer": "Return",
+   "seq": 16,
+   "name": "Newcastle Station",
+   "lng": -1.6186148,
+   "lat": 54.9688607
+  },
+  {
+   "layer": "Return",
+   "seq": 17,
+   "name": "Newcastle Depot",
+   "lng": -1.6564482,
+   "lat": 54.9597522
+  }
+ ]
+}

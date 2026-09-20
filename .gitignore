@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+web/node_modules/
+
+# environment / secrets
+.env
+.env.*
+!.env.example
+
+# large static inputs — provenance in data/README.md, regenerate via scripts/
+data/*
+!data/README.md
+
+# runtime artefacts
+cache/*
+!cache/.gitkeep
+output/*
+!output/.gitkeep
+
+# build
+web/dist/
+
+# OS / editor
+.DS_Store
+*.log

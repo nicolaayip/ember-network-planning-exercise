@@ -1,0 +1,1092 @@
+{
+  "routeId": "newcastle-edinburgh",
+  "routeName": "Newcastle – Edinburgh (A1)",
+  "_source": {
+    "kmz": "data/task/newcastle_edinburgh_routemap.kmz",
+    "importedAt": "2026-09-16T20:51:44.240Z",
+    "matchRadiusM": 10,
+    "matchReviewAboveM": 5,
+    "note": "Draft from scripts/import-route.js. Fields prefixed _ are provenance and are ignored by the engine. Review isSingleCarriageway per stop and any _matchStatus of review. The depot is stops[0] of outbound / last of return with role=depot.",
+    "timetable": {
+      "file": "data/task/newcastle_edinburgh_routetimetable.xlsx",
+      "sheet": "Timetable",
+      "importedAt": "2026-09-16T20:51:44.481Z"
+    }
+  },
+  "depot": {
+    "name": "Newcastle Depot",
+    "coordinates": {
+      "lat": 54.9597522,
+      "lng": -1.6564482
+    },
+    "depotToChargerKm": 0,
+    "proposedTimes": {
+      "outboundDeparture": [
+        "07:00",
+        "09:00",
+        "11:00",
+        "13:00",
+        "15:00",
+        "17:00",
+        "19:00",
+        "21:00"
+      ],
+      "returnArrival": [
+        "14:57",
+        "16:57",
+        "18:57",
+        "20:57",
+        "22:57",
+        "24:57",
+        "26:57",
+        "28:57"
+      ]
+    },
+    "timetableLabel": "Newcastle Depot (not for passengers)"
+  },
+  "directions": {
+    "outbound": {
+      "label": "Newcastle Station → Edinburgh George Street",
+      "stops": [
+        {
+          "naptanId": "DEPOT:newcastle-depot",
+          "role": "depot",
+          "stopName": "Newcastle Depot",
+          "coordinates": {
+            "lat": 54.9597522,
+            "lng": -1.6564482
+          },
+          "dwellTimeBufferSeconds": 0,
+          "_placemark": "Newcastle Depot",
+          "_placemarkCoordinates": {
+            "lat": 54.9597522,
+            "lng": -1.6564482
+          },
+          "_matchStatus": "depot",
+          "proposedTimes": [
+            "07:00",
+            "09:00",
+            "11:00",
+            "13:00",
+            "15:00",
+            "17:00",
+            "19:00",
+            "21:00"
+          ]
+        },
+        {
+          "naptanId": "41000008NC92",
+          "stopName": "Central Stn Neville St (D)",
+          "localityName": "Newcastle upon Tyne",
+          "coordinates": {
+            "lat": 54.968854,
+            "lng": -1.618603
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Newcastle Station",
+          "_placemarkCoordinates": {
+            "lat": 54.9688607,
+            "lng": -1.6186148
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "alwaysServed": true,
+          "proposedTimes": [
+            "07:15",
+            "09:15",
+            "11:15",
+            "13:15",
+            "15:15",
+            "17:15",
+            "19:15",
+            "21:15"
+          ]
+        },
+        {
+          "naptanId": "3100Z199843",
+          "stopName": "The Fairway (nr)",
+          "localityName": "Loansdean",
+          "coordinates": {
+            "lat": 55.1532294,
+            "lng": -1.6888638
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Morpeth Loansdean",
+          "_placemarkCoordinates": {
+            "lat": 55.1532323,
+            "lng": -1.688899
+          },
+          "_matchDistanceM": 2,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "07:43",
+            "09:43",
+            "11:43",
+            "13:43",
+            "15:43",
+            "17:43",
+            "19:43",
+            "21:43"
+          ]
+        },
+        {
+          "naptanId": "3100Z200857",
+          "stopName": "Castle Square (N-bound)",
+          "localityName": "Morpeth",
+          "coordinates": {
+            "lat": 55.1656598,
+            "lng": -1.6863496
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Morpeth Town Centre",
+          "_placemarkCoordinates": {
+            "lat": 55.16567,
+            "lng": -1.686343
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "07:46",
+            "09:46",
+            "11:46",
+            "13:46",
+            "15:46",
+            "17:46",
+            "19:46",
+            "21:46"
+          ]
+        },
+        {
+          "naptanId": "3100Z185871",
+          "stopName": "Morpeth Northern By-pass (sw)",
+          "localityName": "Fair Moor",
+          "coordinates": {
+            "lat": 55.1785567,
+            "lng": -1.7115718
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Morpeth Northgate",
+          "_placemarkCoordinates": {
+            "lat": 55.1785425,
+            "lng": -1.7115999
+          },
+          "_matchDistanceM": 2,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "07:51",
+            "09:51",
+            "11:51",
+            "13:51",
+            "15:51",
+            "17:51",
+            "19:51",
+            "21:51"
+          ]
+        },
+        {
+          "naptanId": "3100Z188923",
+          "stopName": "School (N-bound)",
+          "localityName": "Tritlington",
+          "coordinates": {
+            "lat": 55.2251612,
+            "lng": -1.7059887
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Tritlington",
+          "_placemarkCoordinates": {
+            "lat": 55.2251666,
+            "lng": -1.7060372
+          },
+          "_matchDistanceM": 3,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "07:56",
+            "09:56",
+            "11:56",
+            "13:56",
+            "15:56",
+            "17:56",
+            "19:56",
+            "21:56"
+          ]
+        },
+        {
+          "naptanId": "3100U194119",
+          "stopName": "Retail Park (opp)",
+          "localityName": "Greensfield",
+          "coordinates": {
+            "lat": 55.400847,
+            "lng": -1.695085
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Alnwick",
+          "_placemarkCoordinates": {
+            "lat": 55.4008648,
+            "lng": -1.6951006
+          },
+          "_matchDistanceM": 2,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "08:11",
+            "10:11",
+            "12:11",
+            "14:11",
+            "16:11",
+            "18:11",
+            "20:11",
+            "22:11"
+          ]
+        },
+        {
+          "naptanId": "3100U169230",
+          "stopName": "Charlton Bridge (N-bound)",
+          "localityName": "North Charlton",
+          "coordinates": {
+            "lat": 55.5012991,
+            "lng": -1.7338073
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "North Charlton",
+          "_placemarkCoordinates": {
+            "lat": 55.5012816,
+            "lng": -1.7338158
+          },
+          "_matchDistanceM": 2,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "08:21",
+            "10:21",
+            "12:21",
+            "14:21",
+            "16:21",
+            "18:21",
+            "20:21",
+            "22:21"
+          ]
+        },
+        {
+          "naptanId": "3100U108339",
+          "stopName": "Black Swan (opp)",
+          "localityName": "Belford",
+          "coordinates": {
+            "lat": 55.5994298,
+            "lng": -1.828777
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Belford",
+          "_placemarkCoordinates": {
+            "lat": 55.5994401,
+            "lng": -1.8287966
+          },
+          "_matchDistanceM": 2,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "08:31",
+            "10:31",
+            "12:31",
+            "14:31",
+            "16:31",
+            "18:31",
+            "20:31",
+            "22:31"
+          ]
+        },
+        {
+          "naptanId": "3100U038436",
+          "stopName": "Holiday Park (opp)",
+          "localityName": "Haggerston",
+          "coordinates": {
+            "lat": 55.6865953,
+            "lng": -1.9409909
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Haggerston",
+          "_placemarkCoordinates": {
+            "lat": 55.6865912,
+            "lng": -1.941043
+          },
+          "_matchDistanceM": 3,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "08:41",
+            "10:41",
+            "12:41",
+            "14:41",
+            "16:41",
+            "18:41",
+            "20:41",
+            "22:41"
+          ]
+        },
+        {
+          "naptanId": "3100T993524",
+          "stopName": "Union Brae (nr)",
+          "localityName": "Tweedmouth",
+          "coordinates": {
+            "lat": 55.7659853,
+            "lng": -2.0118417
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Berwick-upon-Tweed",
+          "_placemarkCoordinates": {
+            "lat": 55.765991,
+            "lng": -2.0118527
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "08:50",
+            "10:50",
+            "12:50",
+            "14:50",
+            "16:50",
+            "18:50",
+            "20:50",
+            "22:50"
+          ]
+        },
+        {
+          "naptanId": "6900170",
+          "stopName": "East Flemington (Nr)",
+          "localityName": "Burnmouth",
+          "coordinates": {
+            "lat": 55.839582,
+            "lng": -2.074574
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Burnmouth",
+          "_placemarkCoordinates": {
+            "lat": 55.8395858,
+            "lng": -2.0745812
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "09:01",
+            "11:01",
+            "13:01",
+            "15:01",
+            "17:01",
+            "19:01",
+            "21:01",
+            "23:01"
+          ]
+        },
+        {
+          "naptanId": "69001150",
+          "stopName": "Houndwood S-Bound (S-Bound)",
+          "localityName": "Houndwood",
+          "coordinates": {
+            "lat": 55.86766,
+            "lng": -2.255126
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Houndwood",
+          "_placemarkCoordinates": {
+            "lat": 55.86763,
+            "lng": -2.2551485
+          },
+          "_matchDistanceM": 4,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "09:10",
+            "11:10",
+            "13:10",
+            "15:10",
+            "17:10",
+            "19:10",
+            "21:10",
+            "23:10"
+          ]
+        },
+        {
+          "naptanId": "627010030200",
+          "stopName": "Dunbar Asda (opp)",
+          "localityName": "Dunbar",
+          "coordinates": {
+            "lat": 55.989568,
+            "lng": -2.512453
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Dunbar",
+          "_placemarkCoordinates": {
+            "lat": 55.9895807,
+            "lng": -2.512489
+          },
+          "_matchDistanceM": 3,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "09:27",
+            "11:27",
+            "13:27",
+            "15:27",
+            "17:27",
+            "19:27",
+            "21:27",
+            "23:27"
+          ]
+        },
+        {
+          "naptanId": "627008020020",
+          "stopName": "Bridgend Hotel (opp)",
+          "localityName": "East Linton",
+          "coordinates": {
+            "lat": 55.985199,
+            "lng": -2.6556
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "East Linton",
+          "_placemarkCoordinates": {
+            "lat": 55.9852062,
+            "lng": -2.6556048
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "09:37",
+            "11:37",
+            "13:37",
+            "15:37",
+            "17:37",
+            "19:37",
+            "21:37",
+            "23:37"
+          ]
+        },
+        {
+          "naptanId": "627009020070",
+          "stopName": "Police Station (at)",
+          "localityName": "Haddington",
+          "coordinates": {
+            "lat": 55.955336,
+            "lng": -2.78267
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Haddington",
+          "_placemarkCoordinates": {
+            "lat": 55.9552923,
+            "lng": -2.782671
+          },
+          "_matchDistanceM": 5,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "09:51",
+            "11:51",
+            "13:51",
+            "15:51",
+            "17:51",
+            "19:51",
+            "21:51",
+            "23:51"
+          ]
+        },
+        {
+          "naptanId": "627003040550",
+          "stopName": "Blindwells South (at)",
+          "localityName": "Prestonpans",
+          "coordinates": {
+            "lat": 55.955221,
+            "lng": -2.95139
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Prestonpans",
+          "_placemarkCoordinates": {
+            "lat": 55.9552275,
+            "lng": -2.9513289
+          },
+          "_matchDistanceM": 4,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "10:04",
+            "12:04",
+            "14:04",
+            "16:04",
+            "18:04",
+            "20:04",
+            "22:04",
+            "24:04"
+          ]
+        },
+        {
+          "naptanId": "6200206490",
+          "stopName": "George Street (The Dome) (Stop GL)",
+          "localityName": "Edinburgh",
+          "coordinates": {
+            "lat": 55.953949,
+            "lng": -3.195482
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Edinburgh George Street",
+          "_placemarkCoordinates": {
+            "lat": 55.9539406,
+            "lng": -3.1954919
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "alwaysServed": true,
+          "proposedTimes": [
+            "10:37",
+            "12:37",
+            "14:37",
+            "16:37",
+            "18:37",
+            "20:37",
+            "22:37",
+            "24:37"
+          ]
+        }
+      ]
+    },
+    "return": {
+      "label": "Edinburgh George Street → Newcastle Station",
+      "stops": [
+        {
+          "naptanId": "6200206490",
+          "stopName": "George Street (The Dome) (Stop GL)",
+          "localityName": "Edinburgh",
+          "coordinates": {
+            "lat": 55.953949,
+            "lng": -3.195482
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Edinburgh George Street",
+          "_placemarkCoordinates": {
+            "lat": 55.9539406,
+            "lng": -3.1954919
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "alwaysServed": true,
+          "proposedTimes": [
+            "11:22",
+            "13:22",
+            "15:22",
+            "17:22",
+            "19:22",
+            "21:22",
+            "23:22",
+            "25:22"
+          ]
+        },
+        {
+          "naptanId": "627003040550",
+          "stopName": "Blindwells South (at)",
+          "localityName": "Prestonpans",
+          "coordinates": {
+            "lat": 55.955221,
+            "lng": -2.95139
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Prestonpans",
+          "_placemarkCoordinates": {
+            "lat": 55.9552275,
+            "lng": -2.9513289
+          },
+          "_matchDistanceM": 4,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "11:57",
+            "13:57",
+            "15:57",
+            "17:57",
+            "19:57",
+            "21:57",
+            "23:57",
+            "25:57"
+          ]
+        },
+        {
+          "naptanId": "627009010200",
+          "stopName": "Corn Exchange (opp)",
+          "localityName": "Haddington",
+          "coordinates": {
+            "lat": 55.955532,
+            "lng": -2.78104
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Haddington",
+          "_placemarkCoordinates": {
+            "lat": 55.9555551,
+            "lng": -2.7810241
+          },
+          "_matchDistanceM": 3,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "12:09",
+            "14:09",
+            "16:09",
+            "18:09",
+            "20:09",
+            "22:09",
+            "24:09",
+            "26:09"
+          ]
+        },
+        {
+          "naptanId": "627008010020",
+          "stopName": "Bridgend Hotel (at)",
+          "localityName": "East Linton",
+          "coordinates": {
+            "lat": 55.985345,
+            "lng": -2.655436
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "East Linton",
+          "_placemarkCoordinates": {
+            "lat": 55.9853517,
+            "lng": -2.6554465
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "12:22",
+            "14:22",
+            "16:22",
+            "18:22",
+            "20:22",
+            "22:22",
+            "24:22",
+            "26:22"
+          ]
+        },
+        {
+          "naptanId": "627010030200",
+          "stopName": "Dunbar Asda (opp)",
+          "localityName": "Dunbar",
+          "coordinates": {
+            "lat": 55.989568,
+            "lng": -2.512453
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Dunbar",
+          "_placemarkCoordinates": {
+            "lat": 55.9895807,
+            "lng": -2.512489
+          },
+          "_matchDistanceM": 3,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "12:30",
+            "14:30",
+            "16:30",
+            "18:30",
+            "20:30",
+            "22:30",
+            "24:30",
+            "26:30"
+          ]
+        },
+        {
+          "naptanId": "69001149",
+          "stopName": "Houndwood N-Bound (N-Bound)",
+          "localityName": "Houndwood",
+          "coordinates": {
+            "lat": 55.867413,
+            "lng": -2.255799
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Houndwood",
+          "_placemarkCoordinates": {
+            "lat": 55.8674027,
+            "lng": -2.2558003
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "12:48",
+            "14:48",
+            "16:48",
+            "18:48",
+            "20:48",
+            "22:48",
+            "24:48",
+            "26:48"
+          ]
+        },
+        {
+          "naptanId": "6900171",
+          "stopName": "Burnmouth A1 (At)",
+          "localityName": "Burnmouth",
+          "coordinates": {
+            "lat": 55.841782,
+            "lng": -2.077006
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Burnmouth",
+          "_placemarkCoordinates": {
+            "lat": 55.8418027,
+            "lng": -2.0769523
+          },
+          "_matchDistanceM": 4,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "12:56",
+            "14:56",
+            "16:56",
+            "18:56",
+            "20:56",
+            "22:56",
+            "24:56",
+            "26:56"
+          ]
+        },
+        {
+          "naptanId": "3100T993525",
+          "stopName": "Union Brae (opp)",
+          "localityName": "Tweedmouth",
+          "coordinates": {
+            "lat": 55.766201,
+            "lng": -2.0121924
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Berwick-upon-Tweed",
+          "_placemarkCoordinates": {
+            "lat": 55.7662052,
+            "lng": -2.0122067
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "13:07",
+            "15:07",
+            "17:07",
+            "19:07",
+            "21:07",
+            "23:07",
+            "25:07",
+            "27:07"
+          ]
+        },
+        {
+          "naptanId": "3100U039435",
+          "stopName": "Holiday Park (near)",
+          "localityName": "Haggerston",
+          "coordinates": {
+            "lat": 55.6857945,
+            "lng": -1.9388767
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Haggerston",
+          "_placemarkCoordinates": {
+            "lat": 55.6857959,
+            "lng": -1.9388919
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "13:16",
+            "15:16",
+            "17:16",
+            "19:16",
+            "21:16",
+            "23:16",
+            "25:16",
+            "27:16"
+          ]
+        },
+        {
+          "naptanId": "3100U109339",
+          "stopName": "Black Swan (o/s)",
+          "localityName": "Belford",
+          "coordinates": {
+            "lat": 55.5992948,
+            "lng": -1.8286189
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Belford",
+          "_placemarkCoordinates": {
+            "lat": 55.5992992,
+            "lng": -1.8286115
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "13:26",
+            "15:26",
+            "17:26",
+            "19:26",
+            "21:26",
+            "23:26",
+            "25:26",
+            "27:26"
+          ]
+        },
+        {
+          "naptanId": "3100U169231",
+          "stopName": "Charlton Bridge (S-bound)",
+          "localityName": "North Charlton",
+          "coordinates": {
+            "lat": 55.5019728,
+            "lng": -1.7337078
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "North Charlton",
+          "_placemarkCoordinates": {
+            "lat": 55.5019797,
+            "lng": -1.7336926
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "13:37",
+            "15:37",
+            "17:37",
+            "19:37",
+            "21:37",
+            "23:37",
+            "25:37",
+            "27:37"
+          ]
+        },
+        {
+          "naptanId": "3100U194119",
+          "stopName": "Retail Park (opp)",
+          "localityName": "Greensfield",
+          "coordinates": {
+            "lat": 55.400847,
+            "lng": -1.695085
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Alnwick",
+          "_placemarkCoordinates": {
+            "lat": 55.4008648,
+            "lng": -1.6951006
+          },
+          "_matchDistanceM": 2,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "13:46",
+            "15:46",
+            "17:46",
+            "19:46",
+            "21:46",
+            "23:46",
+            "25:46",
+            "27:46"
+          ]
+        },
+        {
+          "naptanId": "3100Z188924",
+          "stopName": "School (S-bound)",
+          "localityName": "Tritlington",
+          "coordinates": {
+            "lat": 55.2258702,
+            "lng": -1.7056062
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Tritlington",
+          "_placemarkCoordinates": {
+            "lat": 55.2258642,
+            "lng": -1.7055329
+          },
+          "_matchDistanceM": 5,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "14:01",
+            "16:01",
+            "18:01",
+            "20:01",
+            "22:01",
+            "24:01",
+            "26:01",
+            "28:01"
+          ]
+        },
+        {
+          "naptanId": "3100Z184871",
+          "stopName": "Morpeth Northern By-pass",
+          "localityName": "Fair Moor",
+          "coordinates": {
+            "lat": 55.1786473,
+            "lng": -1.7118852
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Morpeth Northgate",
+          "_placemarkCoordinates": {
+            "lat": 55.178665,
+            "lng": -1.711911
+          },
+          "_matchDistanceM": 3,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "14:06",
+            "16:06",
+            "18:06",
+            "20:06",
+            "22:06",
+            "24:06",
+            "26:06",
+            "28:06"
+          ]
+        },
+        {
+          "naptanId": "3100Z201857",
+          "stopName": "Castle Square (S-bound)",
+          "localityName": "Morpeth",
+          "coordinates": {
+            "lat": 55.1653082,
+            "lng": -1.6858971
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Morpeth Town Centre",
+          "_placemarkCoordinates": {
+            "lat": 55.16531,
+            "lng": -1.6859299
+          },
+          "_matchDistanceM": 2,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "14:11",
+            "16:11",
+            "18:11",
+            "20:11",
+            "22:11",
+            "24:11",
+            "26:11",
+            "28:11"
+          ]
+        },
+        {
+          "naptanId": "3100Z199842",
+          "stopName": "The Fairway (opp)",
+          "localityName": "Loansdean",
+          "coordinates": {
+            "lat": 55.1524095,
+            "lng": -1.6880227
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Morpeth Loansdean",
+          "_placemarkCoordinates": {
+            "lat": 55.1524231,
+            "lng": -1.6880139
+          },
+          "_matchDistanceM": 2,
+          "_matchStatus": "nearest",
+          "proposedTimes": [
+            "14:14",
+            "16:14",
+            "18:14",
+            "20:14",
+            "22:14",
+            "24:14",
+            "26:14",
+            "28:14"
+          ]
+        },
+        {
+          "naptanId": "41000008NC92",
+          "stopName": "Central Stn Neville St (D)",
+          "localityName": "Newcastle upon Tyne",
+          "coordinates": {
+            "lat": 54.968854,
+            "lng": -1.618603
+          },
+          "isSingleCarriageway": false,
+          "_placemark": "Newcastle Station",
+          "_placemarkCoordinates": {
+            "lat": 54.9688607,
+            "lng": -1.6186148
+          },
+          "_matchDistanceM": 1,
+          "_matchStatus": "nearest",
+          "alwaysServed": true,
+          "proposedTimes": [
+            "14:42",
+            "16:42",
+            "18:42",
+            "20:42",
+            "22:42",
+            "24:42",
+            "26:42",
+            "28:42"
+          ]
+        },
+        {
+          "naptanId": "DEPOT:newcastle-depot",
+          "role": "depot",
+          "stopName": "Newcastle Depot",
+          "coordinates": {
+            "lat": 54.9597522,
+            "lng": -1.6564482
+          },
+          "dwellTimeBufferSeconds": 0,
+          "_placemark": "Newcastle Depot",
+          "_placemarkCoordinates": {
+            "lat": 54.9597522,
+            "lng": -1.6564482
+          },
+          "_matchStatus": "depot",
+          "proposedTimes": [
+            "14:57",
+            "16:57",
+            "18:57",
+            "20:57",
+            "22:57",
+            "24:57",
+            "26:57",
+            "28:57"
+          ]
+        }
+      ]
+    }
+  },
+  "timetableColumns": [
+    {
+      "columnId": "C01",
+      "outboundDeparture": "07:15",
+      "returnDeparture": "11:22",
+      "depotDeparture": "07:00",
+      "depotArrival": "14:57"
+    },
+    {
+      "columnId": "C02",
+      "outboundDeparture": "09:15",
+      "returnDeparture": "13:22",
+      "depotDeparture": "09:00",
+      "depotArrival": "16:57"
+    },
+    {
+      "columnId": "C03",
+      "outboundDeparture": "11:15",
+      "returnDeparture": "15:22",
+      "depotDeparture": "11:00",
+      "depotArrival": "18:57"
+    },
+    {
+      "columnId": "C04",
+      "outboundDeparture": "13:15",
+      "returnDeparture": "17:22",
+      "depotDeparture": "13:00",
+      "depotArrival": "20:57"
+    },
+    {
+      "columnId": "C05",
+      "outboundDeparture": "15:15",
+      "returnDeparture": "19:22",
+      "depotDeparture": "15:00",
+      "depotArrival": "22:57"
+    },
+    {
+      "columnId": "C06",
+      "outboundDeparture": "17:15",
+      "returnDeparture": "21:22",
+      "depotDeparture": "17:00",
+      "depotArrival": "24:57"
+    },
+    {
+      "columnId": "C07",
+      "outboundDeparture": "19:15",
+      "returnDeparture": "23:22",
+      "depotDeparture": "19:00",
+      "depotArrival": "26:57"
+    },
+    {
+      "columnId": "C08",
+      "outboundDeparture": "21:15",
+      "returnDeparture": "25:22",
+      "depotDeparture": "21:00",
+      "depotArrival": "28:57"
+    }
+  ],
+  "daysOfOperation": "Mon - Sun"
+}

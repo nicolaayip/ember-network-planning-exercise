@@ -1,0 +1,620 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FlexibleRouteOptimizationDocument",
+  "description": "Output of one engine run. Two directed services (outbound, return) sharing a fleet; a set of timetable columns (one per driver return trip); per-direction stops and directional OD pairs. See DESIGN_DOC.md §2.1, §4.5, §6.",
+  "type": "object",
+  "required": ["routeId", "routeName", "mode", "directions", "timetableColumns"],
+  "properties": {
+    "routeId": { "type": "string" },
+    "routeName": { "type": "string" },
+    "mode": {
+      "type": "string",
+      "enum": ["evaluate", "propose"],
+      "description": "evaluate: timetableColumns were supplied in the input and scored. propose: timetableColumns were chosen by the engine (§4.5)."
+    },
+    "estimatedTemporalWindows": {
+      "type": "object",
+      "required": ["source", "outbound", "return"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["webtris", "fallback"],
+          "description": "webtris: derived from WebTRIS basis sites (§1.4). fallback: configured defaults."
+        },
+        "outbound": { "$ref": "#/definitions/serviceTemporalWindows" },
+        "return": { "$ref": "#/definitions/serviceTemporalWindows" }
+      }
+    },
+    "trafficProfile": {
+      "type": "object",
+      "description": "WebTRIS-derived corridor traffic profile (§1.4). Absent when the fallback windows were used.",
+      "required": ["source", "period", "basisSites", "weekendToWeekdayVolumeRatio"],
+      "properties": {
+        "source": { "type": "string" },
+        "period": {
+          "type": "object",
+          "description": "Seasonal window: launch date = today + lead days; same calendar window in each previous year, averaged (§1.4).",
+          "properties": {
+            "label": { "type": "string" },
+            "launchDate": { "type": ["string", "null"] },
+            "launchLeadDays": { "type": ["integer", "null"] },
+            "windows": { "type": "array", "items": { "type": "object", "properties": { "year": { "type": "integer" }, "start": { "type": "string" }, "end": { "type": ["string", "null"] } } } },
+            "excludedDates": { "type": "integer" }
+          }
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "corridorKmWithSites": { "type": "number" },
+            "corridorKmTotal": { "type": "number" }
+          }
+        },
+        "outboundCompassDirection": { "type": "string" },
+        "basisSites": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "$ref": "#/definitions/trafficBasisSite" }
+        },
+        "weekendToWeekdayVolumeRatio": { "type": "number" }
+      }
+    },
+    "directions": {
+      "type": "object",
+      "required": ["outbound", "return"],
+      "properties": {
+        "outbound": { "$ref": "#/definitions/direction" },
+        "return": { "$ref": "#/definitions/direction" }
+      }
+    },
+    "timetableColumns": {
+      "type": "array",
+      "description": "One entry per driver shift / return trip (§2.1). Empty in propose mode until §4.5 has run.",
+      "items": { "$ref": "#/definitions/timetableColumn" }
+    },
+    "daysOfOperation": {
+      "type": ["string", "null"],
+      "description": "e.g. 'Mon - Sun' as stated on the supplied timetable."
+    },
+    "timetableSelection": {
+      "type": "object",
+      "description": "§4.5 output. weekday.proposal: supplied columns scored as timetabled (standalone and incremental). weekday/weekend.recommended: greedy columns with marginal gains and the services-vs-captured-demand curve. Scores are unit-free shares of total demand captured inside competitor market openings.",
+      "required": ["thresholdMinutes", "weekday", "weekend"],
+      "properties": {
+        "thresholdMinutes": { "type": "number" },
+        "candidateGrid": { "type": "object" },
+        "weekday": { "type": "object", "properties": { "proposal": { "type": "object" }, "recommended": { "type": "object" } } },
+        "weekend": { "type": "object", "properties": { "recommended": { "type": "object" } } }
+      }
+    },
+    "fleet": {
+      "type": "object",
+      "description": "Phase 4 output (§5): energy feasibility, charging times, drivers' hours per column, vehicles required and Gantt per consumption scenario. Absent until Phase 4 has run.",
+      "required": ["distance", "energy", "charging", "scenarios"],
+      "properties": {
+        "distance": {
+          "type": "object",
+          "required": ["oneWayKm", "returnTripKm", "deadKm", "source"],
+          "properties": {
+            "oneWayKm": { "type": "object", "properties": { "outbound": { "type": "number" }, "return": { "type": "number" } } },
+            "returnTripKm": { "type": "number" },
+            "deadKm": { "type": "number", "description": "Depot ↔ first/last passenger stop, both ends." },
+            "source": { "type": "string", "description": "'google-routes' once §2.2 has run; otherwise the placeholder estimate used." }
+          }
+        },
+        "energy": {
+          "type": "object",
+          "description": "Keyed by consumption scenario name (low/central/high).",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["kwhPerKm", "energyKwh", "usableKwh", "socOnReturn", "feasible"],
+            "properties": {
+              "totalKm": { "type": "number" },
+              "kwhPerKm": { "type": "number" },
+              "energyKwh": { "type": "number" },
+              "usableKwh": { "type": "number" },
+              "socStart": { "type": "number" },
+              "socOnReturn": { "type": "number" },
+              "marginKwh": { "type": "number" },
+              "feasible": { "type": "boolean" },
+              "twoReturnsFeasible": { "type": "boolean" }
+            }
+          }
+        },
+        "breakEvenKwhPerKm": { "type": "number" },
+        "charging": {
+          "type": "object",
+          "description": "Recharge from SoC-on-return (central scenario) to ceiling, keyed by number of cables.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "minutes": { "type": "number" },
+              "chargingMinutes": { "type": "number" },
+              "energyKwh": { "type": "number" },
+              "powerKw": { "type": "number" }
+            }
+          }
+        },
+        "recommended": {
+          "type": "object",
+          "description": "§4.5 step 4: the recommended weekday columns scheduled progressively; columnsWithinCap = how many fit within fleetCap vehicles (default: the proposal's own fleet size).",
+          "properties": {
+            "basis": { "type": "string" },
+            "fleetCap": { "type": ["integer", "null"] },
+            "fleetCapBasis": { "type": "string" },
+            "columnsWithinCap": { "type": "integer" },
+            "columnsTotal": { "type": "integer" },
+            "progression": { "type": "array", "items": { "type": "object" } },
+            "vehiclesForAll": { "type": "integer" },
+            "vehicles": { "type": "array", "items": { "type": "object" } },
+            "grid": { "type": "object" },
+            "cablesPerSlot": { "type": "array", "items": { "type": "integer" } }
+          }
+        },
+        "scenarios": {
+          "type": "object",
+          "description": "Block schedule per consumption scenario.",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["vehiclesRequired", "returnFeasible"],
+            "properties": {
+              "vehiclesRequired": { "type": "integer", "minimum": 0 },
+              "returnFeasible": { "type": "boolean" },
+              "requiredSocWindow": { "type": "number", "description": "Fraction of the pack one return consumes." },
+              "note": { "type": "string" },
+              "socOnReturn": { "type": "number" },
+              "cablesPerSlot": { "type": "array", "items": { "type": "integer" } },
+              "unassignedColumns": { "type": "array", "items": { "type": "object" } },
+              "peakCablesInUse": { "type": "integer" },
+              "cablesWithinCapacity": { "type": "boolean" },
+              "vehicles": { "type": "array", "items": { "type": "object" } },
+              "grid": { "type": "object" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "trafficBand": {
+      "type": "object",
+      "required": ["id", "kind", "start", "end", "apex"],
+      "properties": {
+        "id": { "type": "string", "description": "Stable band id, e.g. peak1, valley1." },
+        "kind": { "type": "string", "enum": ["peak", "valley"] },
+        "start": { "$ref": "#/definitions/hhmm", "description": "Band start (inclusive)." },
+        "end": { "$ref": "#/definitions/hhmm", "description": "Band end (exclusive)." },
+        "apex": { "$ref": "#/definitions/hhmm", "description": "Google Routes departure for this band." },
+        "apexPctPerHour": { "type": "number" }
+      }
+    },
+    "serviceTemporalWindows": {
+      "type": "object",
+      "required": ["weekdayBands"],
+      "properties": {
+        "weekdayBands": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/trafficBand" } },
+        "profileKind": { "type": "string", "enum": ["dual_peak", "single_peak", "plateau", "flat"] },
+        "weekendDeparture": { "$ref": "#/definitions/hhmm", "description": "Weekend peak apex at the basis site (80% flank band); Google Routes weekend query." },
+        "weekendPeakBand": { "$ref": "#/definitions/trafficBand", "description": "Weekend busy band (80% flank edges) used for peak-filtered market openings on Sat/Sun." },
+        "basisSiteId": { "type": "integer", "description": "WebTRIS site id used for this direction." },
+        "anchorStopName": { "type": "string", "description": "Terminal passenger stop nearest the basis counter." },
+        "compass": { "type": "string", "description": "Compass direction of traffic at the basis site (northbound, southbound, …)." }
+      }
+    },
+    "trafficBasisSite": {
+      "type": "object",
+      "required": ["serviceDirection", "id", "weekdayBands"],
+      "properties": {
+        "serviceDirection": { "type": "string", "enum": ["outbound", "return"] },
+        "compass": { "type": "string" },
+        "anchorStopName": { "type": "string" },
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "direction": { "type": "string" },
+        "lat": { "type": "number", "description": "WebTRIS counter WGS84 latitude." },
+        "lng": { "type": "number", "description": "WebTRIS counter WGS84 longitude." },
+        "routeDistanceM": { "type": ["number", "null"], "description": "Distance from counter to the Google route polyline (metres), set by refine-basis." },
+        "nearestStop": { "type": "string" },
+        "weekdayCoverage": { "type": "number" },
+        "vehiclesPerWeekday": { "type": "number" },
+        "vehiclesPerWeekendDay": { "type": "number" },
+        "yearsUsed": { "type": ["array", "null"], "items": { "type": "integer" } },
+        "weekdayBands": { "type": "array", "items": { "$ref": "#/definitions/trafficBand" } },
+        "profileKind": { "type": "string" },
+        "dayMeanPctPerHour": { "type": "number" },
+        "weekendBusyHour": { "type": "object", "description": "Weekend peak band on Sat/Sun profile (80% flank edges, same as weekday detectBands)." },
+        "weekdayHourlyPct": { "type": "array", "items": { "type": "number" }, "minItems": 24, "maxItems": 24 },
+        "weekendHourlyPct": { "type": "array", "items": { "type": "number" }, "minItems": 24, "maxItems": 24 },
+        "weekdayQuarterHourPct": { "type": "array", "items": { "type": "number" }, "minItems": 96, "maxItems": 96 },
+        "weekendQuarterHourPct": { "type": "array", "items": { "type": "number" }, "minItems": 96, "maxItems": 96 },
+        "perYear": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "deadLegCheck": {
+      "type": "object",
+      "required": ["allowanceMin", "routedMin", "band", "slackMin"],
+      "properties": {
+        "allowanceMin": { "type": "number", "description": "Minutes the timetable allows for the dead leg." },
+        "routedMin": { "type": "number", "description": "Google Routes duration × coach time factor (central) for the window the leg falls in." },
+        "band": { "type": "string", "description": "Traffic band id (or weekend) used for the routed dead-leg duration." },
+        "distanceKm": { "type": "number" },
+        "slackMin": { "type": "number", "description": "allowanceMin − routedMin; negative = the vehicle cannot make the first stop on time." }
+      }
+    },
+    "hhmm": {
+      "type": "string",
+      "pattern": "^[0-2][0-9]:[0-5][0-9]$",
+      "description": "HH:MM in service-day notation: hours may exceed 23 for times after midnight within the same operating day (e.g. 25:22 = 01:22 next day)."
+    },
+
+    "direction": {
+      "type": "object",
+      "required": ["orderedStops", "directionalODPairs"],
+      "properties": {
+        "label": { "type": "string", "description": "e.g. 'Newcastle → Edinburgh'" },
+        "orderedStops": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/definitions/stop" }
+        },
+        "directionalODPairs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/odPair" }
+        },
+        "legs": {
+          "type": "array",
+          "description": "Consecutive-stop legs from Google Routes (§2.2–2.3). Absent when topology did not run.",
+          "items": {
+            "type": "object",
+            "required": ["fromStopId", "toStopId", "distanceKm", "windows", "coachAdjustedMin"],
+            "properties": {
+              "fromStopId": { "type": "string" },
+              "toStopId": { "type": "string" },
+              "deadLeg": { "type": "boolean", "description": "True when one end is the role=depot point: depot → first stop (outbound) or last stop → depot (return). Routed and timed like any leg; carries no passengers (§5.1)." },
+              "distanceKm": { "type": "number" },
+              "windows": {
+                "type": "object",
+                "description": "Google car durations per temporal window.",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": { "durationMin": { "type": "number" }, "staticDurationMin": { "type": "number" } }
+                }
+              },
+              "coachAdjustedMin": {
+                "type": "object",
+                "description": "Off-peak duration × coach time factor, per factor scenario.",
+                "properties": { "low": { "type": "number" }, "central": { "type": "number" }, "high": { "type": "number" } }
+              },
+              "proposedMin": { "type": "number", "description": "Leg time implied by the proposed timetable (first column)." },
+              "deltaMin": { "type": "number", "description": "proposedMin − coachAdjustedMin.central (+ = timetable has slack)." },
+              "coachSpeedFactor": { "type": "number", "description": "Central per-leg coach factor from OSM carriageway kind (§2.3)." }
+            }
+          }
+        },
+        "routePolyline": { "type": "string", "description": "Encoded polyline of the off-peak route (dashboard map, WebTRIS buffer)." },
+        "endToEndMin": {
+          "type": "object",
+          "description": "Coach-adjusted (central) first-stop to last-stop minutes incl. dwell, per window.",
+          "additionalProperties": { "type": "number" }
+        }
+      }
+    },
+
+    "stop": {
+      "type": "object",
+      "required": ["sequenceOrder", "naptanId", "stopName", "coordinates", "dwellTimeBufferSeconds"],
+      "properties": {
+        "sequenceOrder": { "type": "integer", "minimum": 0 },
+        "naptanId": { "type": "string", "description": "NaPTAN ATCOCode; for role=depot a synthetic id DEPOT:<slug> (not in NaPTAN)" },
+        "role": {
+          "type": "string",
+          "enum": ["passenger", "depot"],
+          "default": "passenger",
+          "description": "depot = the first point of the outbound direction / last of the return: routed and timed like any other point (dead legs, §5.1) but never a calling point — no OD pairs, catchment, POI, demand or supply are computed for it."
+        },
+        "stopName": { "type": "string" },
+        "localityName": { "type": "string" },
+        "coordinates": {
+          "type": "object",
+          "required": ["lat", "lng"],
+          "properties": {
+            "lat": { "type": "number" },
+            "lng": { "type": "number" }
+          }
+        },
+        "isSingleCarriageway": {
+          "type": "boolean",
+          "description": "Legacy; superseded by carriagewayKind."
+        },
+        "carriagewayKind": {
+          "type": "string",
+          "enum": ["urban", "single", "dual"],
+          "description": "OSM-derived kind for the leg arriving at this stop (§2.3)."
+        },
+        "hasBusLane": {
+          "type": "boolean",
+          "description": "Reserved. Bus-lane correction is not applied in the current model (§7.11); if present it is informational only."
+        },
+        "dwellTimeBufferSeconds": { "type": "integer", "minimum": 0 },
+        "alwaysServed": {
+          "type": "boolean",
+          "description": "True for the two terminals (Newcastle Station, Edinburgh George Street); all other stops are pre-booked only (§2.4)."
+        },
+        "proposedTimes": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/hhmm" },
+          "description": "Proposed timetable time at this stop, one per timetable column, service-day notation. From the supplied timetable; used by the Legs table (§6.2). For role=depot: depot departure (outbound) / depot arrival (return)."
+        },
+        "deviationMinutes": {
+          "type": "number",
+          "description": "Coach-adjusted (central) minutes the route takes via this stop minus without it, incl. dwell (§2.3). Intermediate stops only."
+        },
+        "deviationKm": { "type": "number" },
+        "catchment": {
+          "type": "object",
+          "description": "Proportional walk catchment (§3.2). Absent when spatial resolution did not run.",
+          "required": ["walkSeconds", "areaKm2", "population", "zones"],
+          "properties": {
+            "walkSeconds": { "type": "integer" },
+            "areaKm2": { "type": "number" },
+            "population": { "type": "integer", "minimum": 0, "description": "Σ zone population × area ratio" },
+            "country": { "type": "string" },
+            "zones": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": { "type": "string" },
+                  "name": { "type": "string" },
+                  "zonePopulation": { "type": ["integer", "null"] },
+                  "ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "allocated": { "type": "integer", "minimum": 0 }
+                }
+              }
+            },
+            "polygon": { "type": "object", "description": "GeoJSON geometry of the isochrone (dashboard map)." }
+          }
+        },
+        "poi": {
+          "type": "object",
+          "description": "POI gravity score (§3.5). Absent when Overpass did not run.",
+          "required": ["weekday", "weekend", "counts"],
+          "properties": {
+            "weekday": { "type": "number", "minimum": 0 },
+            "weekend": { "type": "number", "minimum": 0 },
+            "counts": { "type": "object", "additionalProperties": { "type": "integer" } },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" }, "name": { "type": "string" }, "group": { "type": "string" },
+                  "distanceM": { "type": "integer" }, "decay": { "type": "number" },
+                  "weekday": { "type": "number" }, "weekend": { "type": "number" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "odPair": {
+      "type": "object",
+      "required": [
+        "pairId",
+        "originStopId",
+        "destinationStopId",
+        "simulatedTravelTimeMinutes",
+        "demandVector",
+        "supplyVector"
+      ],
+      "properties": {
+        "pairId": { "type": "string" },
+        "originStopId": { "type": "string" },
+        "destinationStopId": { "type": "string" },
+        "simulatedTravelTimeMinutes": {
+          "type": "number",
+          "description": "Coach-adjusted running time (§2.3) plus dwell (§2.4) in the baseline valley band; per-sample values in simulatedTravelTimeBySample."
+        },
+        "simulatedTravelTimeBySample": {
+          "type": "object",
+          "description": "Coach in-vehicle minutes per traffic sample id (band ids + weekend).",
+          "additionalProperties": { "type": "number" }
+        },
+        "coachPathKm": {
+          "type": "number",
+          "description": "Road km along the service stop sequence between origin and destination (sum of topology legs, §2.3)."
+        },
+        "directCarKm": {
+          "type": "number",
+          "description": "Google DRIVE A→B direct road km from Route Matrix, off-peak (§2.3). Absent when pair-drive did not run."
+        },
+        "pathDetourRatio": {
+          "type": "number",
+          "description": "coachPathKm / directCarKm; > 1 → coach path longer than driving direct."
+        },
+        "pathDetourWarning": {
+          "type": "boolean",
+          "description": "true when pathDetourRatio > 1.25"
+        },
+        "dwellMinutesBetween": {
+          "type": "number",
+          "description": "Sum of dwell buffers at intermediate stops between origin and destination while on board (§2.4)."
+        },
+        "directCarDriveMinutes": {
+          "type": "number",
+          "description": "Direct drive time A→B from Route Matrix off-peak (reference; distance is the primary competitiveness signal)."
+        },
+        "directCarStaticDriveMinutes": {
+          "type": "number",
+          "description": "Direct free-flow drive time A→B from Route Matrix staticDuration (§2.3 time-ratio reference)."
+        },
+        "demandVector": {
+          "type": "object",
+          "required": ["offPeakWeekday", "offPeakWeekend"],
+          "properties": {
+            "offPeakWeekday": {
+              "type": "object",
+              "required": [
+                "proportionalRetainedPopulation",
+                "destinationPoiGravityScore",
+                "calculatedWeekdayGravityPotential"
+              ],
+              "properties": {
+                "proportionalRetainedPopulation": { "type": "integer", "minimum": 0, "description": "Catchment population at the origin stop (§3.3)." },
+                "destinationPoiGravityScore": { "type": "number", "minimum": 0 },
+                "calculatedWeekdayGravityPotential": { "type": "number" }
+              }
+            },
+            "offPeakWeekend": {
+              "type": "object",
+              "required": [
+                "proportionalRawResidentPopulation",
+                "destinationPoiWeekendGravityScore",
+                "calculatedWeekendGravityPotential"
+              ],
+              "properties": {
+                "proportionalRawResidentPopulation": { "type": "integer", "minimum": 0 },
+                "destinationPoiWeekendGravityScore": { "type": "number", "minimum": 0 },
+                "calculatedWeekendGravityPotential": { "type": "number" }
+              }
+            }
+          }
+        },
+        "supplyVector": {
+          "type": "object",
+          "required": ["detectedOverlappingLines", "calculatedHeadwayGaps"],
+          "properties": {
+            "detectedOverlappingLines": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "calculatedHeadwayGaps": {
+              "type": "array",
+              "description": "Weekday BODS headway gaps; isMarketOpening when interior gap overlaps a WebTRIS peak band by ≥ threshold.",
+              "items": {
+                "type": "object",
+                "required": ["gapStart", "gapEnd", "durationMinutes", "isMarketOpening"],
+                "properties": {
+                  "gapStart": { "type": "string" },
+                  "gapEnd": { "type": "string" },
+                  "durationMinutes": { "type": "number" },
+                  "isMarketOpening": { "type": "boolean" },
+                  "peakOverlapMinutes": { "type": "number" }
+                }
+              }
+            },
+            "saturdayHeadwayGaps": {
+              "type": "array",
+              "description": "Saturday BODS headway gaps with the same peak-filtered isMarketOpening rule (weekend busy band).",
+              "items": {
+                "type": "object",
+                "required": ["gapStart", "gapEnd", "durationMinutes", "isMarketOpening"],
+                "properties": {
+                  "gapStart": { "type": "string" },
+                  "gapEnd": { "type": "string" },
+                  "durationMinutes": { "type": "number" },
+                  "isMarketOpening": { "type": "boolean" },
+                  "peakOverlapMinutes": { "type": "number" }
+                }
+              }
+            },
+            "saturdayDetectedOverlappingLines": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Saturday overlapping competitor service labels (same format as detectedOverlappingLines)."
+            },
+            "competitorDepartures": {
+              "type": "array",
+              "description": "Weekday competitor departures from the pair origin (time + service label from BODS/TNDS/coach).",
+              "items": {
+                "type": "object",
+                "required": ["time", "service"],
+                "properties": {
+                  "time": { "$ref": "#/definitions/hhmm" },
+                  "service": { "type": "string" }
+                }
+              }
+            },
+            "saturdayCompetitorDepartures": {
+              "type": "array",
+              "description": "Saturday competitor departures from the pair origin (time + service label from BODS/TNDS/coach).",
+              "items": {
+                "type": "object",
+                "required": ["time", "service"],
+                "properties": {
+                  "time": { "$ref": "#/definitions/hhmm" },
+                  "service": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "timetableColumn": {
+      "type": "object",
+      "required": ["columnId", "outboundDeparture", "returnDeparture"],
+      "properties": {
+        "columnId": { "type": "string" },
+        "outboundDeparture": { "$ref": "#/definitions/hhmm" },
+        "returnDeparture": { "$ref": "#/definitions/hhmm" },
+        "depotDeparture": {
+          "$ref": "#/definitions/hhmm",
+          "description": "Depot departure before the outbound passenger run (dead leg)."
+        },
+        "depotArrival": {
+          "$ref": "#/definitions/hhmm",
+          "description": "Depot arrival after the return passenger run (dead leg), service-day notation."
+        },
+        "layoverMinutes": {
+          "type": "number",
+          "description": "returnDeparture − (outboundDeparture + outbound running time). Implied in evaluate mode, chosen in propose mode (§4.5)."
+        },
+        "columnScore": {
+          "type": "number",
+          "description": "Weekday demand-weighted gap coverage in peak-filtered market openings vs weekday BODS competitors (§4.5 step 2)."
+        },
+        "columnScoreWeekend": {
+          "type": "number",
+          "description": "Weekend demand-weighted gap coverage in peak-filtered market openings vs Saturday BODS competitors (§4.5 step 2)."
+        },
+        "outboundArrival": { "$ref": "#/definitions/hhmm" },
+        "returnArrival": { "$ref": "#/definitions/hhmm" },
+        "driving": {
+          "type": "object",
+          "description": "Minutes, from §5.4 checkColumn.",
+          "properties": {
+            "outboundDrivingMinutes": { "type": "number" },
+            "returnDrivingMinutes": { "type": "number" },
+            "dailyDrivingMinutes": { "type": "number" },
+            "dutyMinutes": { "type": "number" },
+            "layoverSlackMinutes": { "type": "number" }
+          }
+        },
+        "deadLegs": {
+          "type": "object",
+          "description": "Dead-leg allowance check (§5.1): timetable minutes between depot and terminus vs routed coach-adjusted (central) minutes for the window that departure falls in. Present only when the depot is routed (role=depot point in the stop lists).",
+          "properties": {
+            "toFirstStop": { "$ref": "#/definitions/deadLegCheck" },
+            "fromLastStop": { "$ref": "#/definitions/deadLegCheck" }
+          }
+        },
+        "checks": {
+          "type": "object",
+          "description": "Drivers' hours, dead-leg and energy flags (§5.1, §5.4); absent until Phase 4 has run.",
+          "properties": {
+            "layoverAtLeast45Min": { "type": "boolean" },
+            "continuousDrivingWithin4h30": { "type": "boolean" },
+            "dailyDrivingWithin9h": { "type": "boolean" },
+            "depotToFirstStopAllowanceSufficient": { "type": "boolean", "description": "outboundDeparture − depotDeparture ≥ routed dead-leg minutes" },
+            "lastStopToDepotAllowanceSufficient": { "type": "boolean", "description": "depotArrival − returnArrival ≥ routed dead-leg minutes" },
+            "socOnReturnAboveFloor": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

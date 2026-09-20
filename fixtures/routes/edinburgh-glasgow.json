@@ -1,0 +1,80 @@
+{
+  "routeId": "edi-stl-gla",
+  "routeName": "Edinburgh – Stirling – Glasgow",
+  "directions": {
+    "outbound": {
+      "label": "Edinburgh → Glasgow",
+      "stops": [
+        {
+          "naptanId": "6200600739",
+          "stopName": "Edinburgh Bus Station (Gate A, Stance 1)",
+          "localityName": "Edinburgh",
+          "coordinates": {
+            "lat": 55.95533,
+            "lng": -3.192065
+          },
+          "alwaysServed": true
+        },
+        {
+          "naptanId": "66004999101",
+          "stopName": "Stirling Bus Station (Stance 1)",
+          "localityName": "Stirling",
+          "coordinates": {
+            "lat": 56.118076,
+            "lng": -3.93431
+          }
+        },
+        {
+          "naptanId": "60903717",
+          "stopName": "Glasgow Buchanan Bus Station (Stance 1)",
+          "localityName": "Glasgow",
+          "alwaysServed": true
+        }
+      ]
+    },
+    "return": {
+      "label": "Glasgow → Edinburgh",
+      "stops": [
+        {
+          "naptanId": "60903718",
+          "stopName": "Glasgow Buchanan Bus Station (Stance 2)",
+          "localityName": "Glasgow",
+          "alwaysServed": true
+        },
+        {
+          "naptanId": "66004999102",
+          "stopName": "Stirling Bus Station (Stance 2)",
+          "localityName": "Stirling",
+          "coordinates": {
+            "lat": 56.118129,
+            "lng": -3.93436
+          }
+        },
+        {
+          "naptanId": "6200600740",
+          "stopName": "Edinburgh Bus Station (Gate A, Stance 2)",
+          "localityName": "Edinburgh",
+          "coordinates": {
+            "lat": 55.955339,
+            "lng": -3.192018
+          },
+          "alwaysServed": true
+        }
+      ]
+    }
+  },
+  "timetableColumns": [
+    {
+      "outboundDeparture": "07:00",
+      "returnDeparture": "10:15"
+    },
+    {
+      "outboundDeparture": "09:00",
+      "returnDeparture": "12:15"
+    },
+    {
+      "outboundDeparture": "16:30",
+      "returnDeparture": "19:45"
+    }
+  ]
+}

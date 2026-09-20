@@ -1,0 +1,8 @@
+# Large raw datasets - exclude from codebase indexing (agent can still read on request)
+data/
+*.geojson
+*.csv
+
+# Dependencies and OS noise
+node_modules/
+.DS_Store

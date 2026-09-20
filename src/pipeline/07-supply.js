@@ -1,18 +1,13 @@
 /**
- * Step 8 — SUPPLY (DESIGN_DOC §4.1–4.4, flow step 8).
+ * Step 7 — SUPPLY (pipeline step 7).
  *
- * BODS timetables (admin areas 410 Tyne & Wear, 310 Northumberland, 690 Scottish Borders) + the
- * long-distance coach bulk zip + TNDS Scotland (local zip, if available) → TransXChange parse →
- * OD-pair filter (≥ 2 route stops matched in order, per direction) → directed links →
- * chronological timeline per pair → headway gaps > threshold = Market Openings.
+ * 1. Load BODS admin-area feeds, long-distance coach zip, and TNDS Scotland (when present).
+ * 2. Scan and parse TransXChange; match journeys through route stops (≥ 2 in order, with tolerance aliases).
+ * 3. Filter by reference dates; dedupe; chain sectional registrations into through journeys.
+ * 4. Flatten per-pair timelines; peak-filter headway gaps → write pair.supplyVector (weekday + Saturday).
  *
- * Writes `pair.supplyVector` for every pair in both directions. Degrades to empty defaults when
- * no source is available. Summary stats go to `ctx.supply` for logging only.
- *
- * Day types are evaluated against concrete reference dates (next Tuesday / Saturday / Sunday on or
- * after today, or `config.supply.referenceDate`), so OperatingPeriod, SpecialDaysOperation and
- * ServicedOrganisation calendars are applied as TransXChange intends. School-day-only journeys are
- * excluded from the weekday timeline unless `config.supply.includeSchoolDayJourneys` is set, and counted.
+ * Degrades to empty supply vectors when no source is available.
+ * School-day-only journeys excluded from weekday unless configured.
  */
 
 import { stat } from "node:fs/promises";

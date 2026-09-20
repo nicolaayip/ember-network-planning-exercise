@@ -1,5 +1,10 @@
 /**
- * Step 3c — Tag carriageway kind per leg from OSM ways along the Google route polyline.
+ * Step 3c — CARRIAGEWAY (pipeline step 3c).
+ *
+ * 1. Walk each leg along the Google route polyline (subsampled for Overpass).
+ * 2. Query OSM ways on the path; tag each destination stop urban / single / dual.
+ *
+ * Skipped when route geometry is missing.
  */
 
 import { waysAlongPath } from "../adapters/overpass.js";

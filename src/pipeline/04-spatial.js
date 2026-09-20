@@ -1,12 +1,11 @@
 /**
- * Step 5 — SPATIAL RESOLUTION (DESIGN_DOC §3.2, flow step 5).
+ * Step 5 — SPATIAL RESOLUTION (pipeline step 5).
  *
- * Per stop: 10-minute walk isochrone (ORS) → intersecting Census zones (ONS LSOA + ScotGov DZ via
- * ArcGIS query) → Turf area ratios → proportional resident population. England zones are joined
- * to TS001; Scottish zones carry totpop2022. Kerb-side pairs (same placemark, both directions)
- * are ~30 m apart and get their own isochrone; ORS is throttled to its 20/min free-tier limit.
+ * 1. Per passenger stop, request a walk isochrone (ORS; default 10 min, throttled to free-tier rate).
+ * 2. Intersect with Census zones (England LSOA + population table; Scotland DZ + totpop2022).
+ * 3. Apportion population by area overlap → stop.catchment and ctx.catchments (deduped by naptanId).
  *
- * Writes stop.catchment = { areaKm2, population, zones[], polygon } and ctx.catchments[naptanId].
+ * Depot skipped. Skipped entirely when OpenRouteService is unavailable.
  */
 
 import { isochrone } from "../adapters/openrouteservice.js";

@@ -1,11 +1,11 @@
 /**
- * Step 7 — OFF-PEAK DEMAND (DESIGN_DOC §3.3–3.5, flow step 7).
+ * Step 6 — OFF-PEAK DEMAND (pipeline step 6).
  *
- * Per stop: Overpass POIs in the isochrone bbox → filter to polygon → weighted, distance-decayed
- * gravity score for weekday and weekend. Per directional pair:
- *   origin population = catchment population_A
- *   weekday potential = retained_A x POI weekday_B
- *   weekend potential = raw population_A x POI weekend_B
+ * 1. Per stop, fetch Overpass POIs in the catchment bbox; filter to the isochrone polygon.
+ * 2. Score weekday and weekend POI gravity (distance-decayed weights).
+ * 3. Fill each OD pair demandVector: catchment population × destination POI gravity (weekday vs weekend scores).
+ *
+ * Skipped when catchments are missing; partial scores when Overpass fails.
  *
  * @format
  */

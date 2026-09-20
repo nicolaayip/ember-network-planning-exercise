@@ -1,13 +1,12 @@
 /**
- * Step 2 — TEMPORAL WINDOWS (DESIGN_DOC §1.4, flow step 2). Runs before topology so the Google
+ * Step 2 — TEMPORAL WINDOWS (pipeline step 2). Runs before topology so the Google
  * departure times use observed peaks.
  *
- * 1. Build a corridor line from the outbound stops (interpolated every ~2 km).
- * 2. From active WebTRIS sites on the corridor within `radiusM`, pick one basis counter per
- *    service direction: nearest qualifying site to the terminal anchor (Newcastle for outbound,
- *    Edinburgh for return — Edinburgh has no counters, so the nearest southbound English site applies).
- * 3. Pull 15-minute volumes for the configured period; detect traffic bands on each basis site.
- * 4. Write estimatedTemporalWindows.outbound / .return and a slim trafficProfile.
+ * 1. Build a corridor line from outbound stops (interpolated every ~2 km).
+ * 2. List active WebTRIS sites on the corridor (`siteRadiusM`); pull 15-minute volumes and detect traffic bands for each.
+ * 3. Pick one basis counter per direction: nearest qualifying site to the terminal anchor
+ *    (Newcastle outbound; Edinburgh return — no Scottish counters, so nearest southbound English site).
+ * 4. Write estimatedTemporalWindows and trafficProfile; refresh weekend volume ratio.
  *
  * Step 2b (refine-basis) may re-pick counters once the Google route polyline exists.
  *

@@ -1,18 +1,12 @@
 /**
- * Step 3 — TOPOLOGY (DESIGN_DOC §2.2, flow step 3).
+ * Step 3 — TOPOLOGY (pipeline step 3).
  *
- * For each direction and each traffic sample (detected band apex + weekend) call Google
- * Routes with the stops as intermediates. Produces ctx.legs[direction] = per-leg objects with
- * distanceKm and per-sample duration / staticDuration, plus ctx.routeGeometry[direction] for
- * later use (WebTRIS site selection, dashboard map).
+ * 1. For each direction and traffic sample (band apex + weekend), call Google Routes through all stops.
+ * 2. Write ctx.legs (distanceKm, per-sample duration) and ctx.routeGeometry (baseline polyline).
+ * 3. For each skippable passenger stop, route without it → ctx.deviation (km saved; deviation minutes finished in velocity).
  *
- * Also computes per-stop deviation inputs: baseline route WITHOUT each intermediate passenger
- * stop (one extra Google call per skip, cached). Coach free-flow deviation is finished in
- * velocity once per-leg carriageway factors exist (§2.3).
- *
- * The depot (role=depot, first point outbound / last point return) is routed like any other point,
- * so legs[0] outbound / legs.at(-1) return are the dead legs (§5.1). It has no deviation (it is
- * not optional) and the terminals adjacent to it are still terminals, not intermediates.
+ * Deviation routes use the baseline traffic sample only. Depot dead legs included; terminals never skipped.
+ * When Google Routes is unavailable, ctx.legs is cleared and downstream steps fall back.
  */
 
 import { computeRoute, departureForSample, departureIso, resolveLaunchDate } from "../adapters/google-routes.js";

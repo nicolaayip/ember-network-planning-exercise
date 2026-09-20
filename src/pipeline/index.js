@@ -1,5 +1,5 @@
 /**
- * Ordered list of pipeline steps, following .cursor/SYSTEM_FLOW.md.
+ * Ordered list of pipeline steps (see flow step → module map below).
  * Each step module exports `name` and `async run(ctx)`; steps mutate ctx.document.
  *
  * Flow step → module:

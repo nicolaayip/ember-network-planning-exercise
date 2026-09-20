@@ -1,8 +1,11 @@
 /**
- * Step 3b — Re-pick WebTRIS basis counters on the Google route polyline (after topology).
+ * Step 3b — REFINE BASIS (pipeline step 3b).
  *
- * Temporal (step 2) chooses counters near a stop-interpolated corridor and the terminal anchor.
- * Once the driven route exists, prefer qualifying counters that lie on that geometry.
+ * 1. List active WebTRIS counters on the driven route polyline (matching compass, within siteRadiusM).
+ * 2. Keep the current basis site when already on-route (≤ 20 m); else re-pick the best on-route site near the terminal anchor.
+ * 3. On change, re-apply that direction's temporal windows and basis metadata; refresh weekend ratio.
+ *
+ * No-op when temporal source is not webtris, evaluation cache is missing, or route geometry is absent.
  */
 
 import { listSites, sitesNear } from "../adapters/webtris.js";

@@ -1,8 +1,11 @@
 /**
- * Step 4b — PAIR PATH (DESIGN_DOC §2.3).
+ * Step 4b — PAIR PATH (pipeline step 4b).
  *
- * Google Route Matrix (one call per direction, off-peak) → directCarKm per OD pair.
- * Coach path km and dwell come from velocity; pathDetourRatio = coachPathKm / directCarKm.
+ * 1. Call Google Route Matrix once per direction (off-peak baseline departure).
+ * 2. Write directCarKm and drive minutes on each OD pair.
+ * 3. Set pathDetourRatio = coachPathKm / directCarKm (coach path from velocity).
+ *
+ * Skipped when velocity did not run or Google Route Matrix is unavailable.
  */
 
 import { computeRouteMatrix, departureForSample, departureIso, resolveLaunchDate } from "../adapters/google-routes.js";

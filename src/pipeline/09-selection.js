@@ -1,13 +1,13 @@
 /**
- * Step 9 — TIMETABLE SELECTION (DESIGN_DOC §4.5, flow step 9).
+ * Step 9 — TIMETABLE SELECTION (pipeline step 9).
  *
- * Evaluate: score every supplied column (as timetabled — the departure times passengers would see)
- * against competitor market openings, standalone and incrementally in column order.
- * Propose: greedy selection of columns (outbound departure x layover) using modelled running times,
- * for weekday and Saturday; produces the services-vs-captured-demand curve.
+ * 1. Score proposed columns: demand-weighted hits in peak-filtered market openings (standalone + incremental).
+ * 2. Rank departure × layover grid slots (weekday and weekend competitor timelines).
+ * 3. Pick suggested columns via chain-aware gap-hit selection (recharge-feasible pairs).
+ * 4. Greedy recommend columns for CSV/schema; optionally trim to fleet cap.
  *
- * Demand weights are unit-free shares (domain/timetable-selection.js). Greedy discovery is
- * uncapped; fleet fit (§4.5 step 2) trims the discovered set separately in domain/fleet-fit.js.
+ * Writes doc.timetableSelection. Skipped when neither velocity nor proposedTimes supply running times.
+ * Fleet cap defaults to proposed timetable vehicle count unless RECOMMENDED_FLEET_CAP is set.
  *
  * @format
  */
@@ -112,7 +112,7 @@ export async function run(ctx) {
     };
   }
 
-  // ---- Fleet reference cap (§4.5 step 2): proposal fleet size — applied after demand greedy, not during it.
+  // ---- Fleet reference cap: proposal fleet size — applied after demand greedy, not during it.
   const dead = deadLegAllowances(doc);
   const fleetCtx = fleetScheduleContext(ctx, dead);
   const proposalVehicles = doc.timetableColumns.length

@@ -1,8 +1,9 @@
 /**
- * Step 1 — INPUT (DESIGN_DOC §2.1, flow step 1).
+ * Step 1 — INPUT (pipeline step 1).
  *
- * Resolves every stop against NaPTAN by ATCO code: fills stopName / localityName / coordinates
- * where the input left them out, reprojecting Easting/Northing where NaPTAN has no lat/lng.
+ * 1. Collect stops missing coordinates or display names (depot is never looked up).
+ * 2. Look up each NaPTAN ATCO code in the loaded index (BNG→WGS84 handled in the adapter).
+ * 3. Fill stopName, localityName, and coordinates; throw if any code is missing.
  *
  * @format
  */

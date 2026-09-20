@@ -1,7 +1,12 @@
 /**
- * Step 4 — VELOCITY (DESIGN_DOC §2.3–2.4, flow step 4).
+ * Step 4 — VELOCITY (pipeline step 4).
  *
- * Per-leg coach factors from carriageway kind; coach time = static x factor + congestion.
+ * 1. Apply coach time factors from carriageway kind (low / central / high scenarios).
+ * 2. Compute cumulative arrivals per traffic sample; write OD travel times and coach path km.
+ * 3. Finish stop deviation minutes from topology skip routes.
+ * 4. Write direction.legs (coach-adjusted times, proposed vs modelled delta).
+ *
+ * Skipped when topology legs are missing.
  *
  * @format
  */

@@ -193,7 +193,7 @@ export default function RouteStops({ doc, pins, direction }: ViewProps) {
     },
     {
       key: "poi",
-      header: "POI wkday / wkend",
+      header: "POI gravity wkday / wkend",
       title:
         "Combined weekday + weekend POI gravity; flagged when both catchment and combined POI are ≤99",
       render: (s) => {

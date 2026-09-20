@@ -1,9 +1,10 @@
 /**
- * Step 10 — VEHICLES & CHARGING (DESIGN_DOC §5, flow step 10).
+ * Step 10 — VEHICLES & CHARGING (pipeline step 10).
  *
- * Feasibility layer over the timetable columns: energy per return under low/central/high
- * consumption, recharge time by cable configuration, drivers' hours flags per column, and a
- * greedy block schedule → vehicles required + Gantt, per scenario.
+ * 1. Compute return-trip distance (Google legs or great-circle fallback) and energy scenarios.
+ * 2. Enrich proposed timetable columns: drivers' hours, dead-leg checks, modelled arrivals.
+ * 3. Schedule blocks per energy scenario → vehicles required, cable use, and Gantt grid.
+ * 4. Write doc.fleet including recharge time by cable configuration and break-even consumption.
  *
  * @format
  */

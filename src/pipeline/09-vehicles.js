@@ -1,5 +1,5 @@
 /**
- * Step 10 — VEHICLES & CHARGING (pipeline step 10).
+ * Pipeline step 9 — VEHICLES & CHARGING.
  *
  * 1. Compute return-trip distance (Google legs or great-circle fallback) and energy scenarios.
  * 2. Enrich proposed timetable columns: drivers' hours, dead-leg checks, modelled arrivals.
@@ -42,7 +42,10 @@ function tripDistance(ctx) {
       dirs[d].legs.filter((l) => !l.deadLeg).reduce((s, l) => s + l.distanceKm, 0);
     return {
       oneWay: { outbound: paxKm("outbound"), return: paxKm("return") },
-      deadKm: [...deadLegs.outbound, ...deadLegs.return].reduce((s, l) => s + l.distanceKm, 0),
+      deadKm: [...deadLegs.outbound, ...deadLegs.return].reduce(
+        (s, l) => s + l.distanceKm,
+        0,
+      ),
       deadLegs,
       source: "google-routes",
     };
@@ -84,11 +87,25 @@ function deadLegCheck(col, key, leg, allowance, atMin, bands, coachFactorCentral
 
 /** Stamp drivers' hours, dead-leg checks, and return a schedule column — or null to skip. */
 function enrichColumn(col, i, env) {
-  const { log, fleet, energy, deadLegs, windows, lastOut, lastRet, depotOutStop, depotRetStop, coachFactorCentral } = env;
+  const {
+    log,
+    fleet,
+    energy,
+    deadLegs,
+    windows,
+    lastOut,
+    lastRet,
+    depotOutStop,
+    depotRetStop,
+    coachFactorCentral,
+  } = env;
   const outArr = lastOut.proposedTimes?.[i];
   const retArr = lastRet.proposedTimes?.[i];
   if (outArr === undefined || retArr === undefined) {
-    log.warn({ column: col.columnId }, "no proposed arrival times for column; skipping drivers' hours and scheduling");
+    log.warn(
+      { column: col.columnId },
+      "no proposed arrival times for column; skipping drivers' hours and scheduling",
+    );
     return null;
   }
 
@@ -124,7 +141,9 @@ function enrichColumn(col, i, env) {
       ? minutes.outboundDeparture - minutes.depotDeparture
       : undefined;
   const allowanceIn =
-    minutes.depotArrival !== undefined ? minutes.depotArrival - minutes.returnArrival : undefined;
+    minutes.depotArrival !== undefined
+      ? minutes.depotArrival - minutes.returnArrival
+      : undefined;
   const deadOutOk = deadLegCheck(
     col,
     "toFirstStop",
@@ -145,12 +164,17 @@ function enrichColumn(col, i, env) {
   );
   col.checks = {
     ...dh.checks,
-    ...(deadOutOk !== undefined ? { depotToFirstStopAllowanceSufficient: deadOutOk } : {}),
+    ...(deadOutOk !== undefined
+      ? { depotToFirstStopAllowanceSufficient: deadOutOk }
+      : {}),
     ...(deadInOk !== undefined ? { lastStopToDepotAllowanceSufficient: deadInOk } : {}),
     socOnReturnAboveFloor: energy.central.feasible,
   };
   if (deadOutOk === false || deadInOk === false) {
-    log.warn({ column: col.columnId, deadLegs: col.deadLegs }, "dead-leg allowance shorter than routed time");
+    log.warn(
+      { column: col.columnId, deadLegs: col.deadLegs },
+      "dead-leg allowance shorter than routed time",
+    );
   }
 
   return {
@@ -264,9 +288,15 @@ export async function run(ctx) {
   log.info(
     {
       returnTripKm: round1(returnTripKm),
-      energyKwh: Object.fromEntries(Object.entries(energy).map(([k, v]) => [k, v.energyKwh])),
-      feasible: Object.fromEntries(Object.entries(energy).map(([k, v]) => [k, v.feasible])),
-      vehicles: Object.fromEntries(Object.entries(scenarios).map(([k, v]) => [k, v.vehiclesRequired])),
+      energyKwh: Object.fromEntries(
+        Object.entries(energy).map(([k, v]) => [k, v.energyKwh]),
+      ),
+      feasible: Object.fromEntries(
+        Object.entries(energy).map(([k, v]) => [k, v.feasible]),
+      ),
+      vehicles: Object.fromEntries(
+        Object.entries(scenarios).map(([k, v]) => [k, v.vehiclesRequired]),
+      ),
     },
     "fleet computed",
   );

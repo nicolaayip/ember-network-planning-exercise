@@ -1,5 +1,5 @@
 /**
- * Step 9 — TIMETABLE SELECTION (pipeline step 9).
+ * Pipeline step 8 — TIMETABLE SELECTION.
  *
  * 1. Score proposed columns: demand-weighted hits in peak-filtered market openings (standalone + incremental).
  * 2. Rank departure × layover grid slots (weekday and weekend competitor timelines).

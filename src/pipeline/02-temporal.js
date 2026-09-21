@@ -1,6 +1,6 @@
 /**
- * Step 2 — TEMPORAL WINDOWS (pipeline step 2). Runs before topology so the Google
- * departure times use observed peaks.
+ * Pipeline step 2 — TEMPORAL WINDOWS.
+ * Runs before topology so the Google departure times use observed peaks.
  *
  * 1. Build a corridor line from outbound stops (interpolated every ~2 km).
  * 2. List active WebTRIS sites on the corridor (`siteRadiusM`); pull 15-minute volumes and detect traffic bands for each.
@@ -8,15 +8,23 @@
  *    (Newcastle outbound; Edinburgh return — no Scottish counters, so nearest southbound English site).
  * 4. Write estimatedTemporalWindows and trafficProfile; refresh weekend volume ratio.
  *
- * Step 2b (refine-basis) may re-pick counters once the Google route polyline exists.
+ * Step 3b (03b-refine-basis) may re-pick counters once the Google route polyline exists.
  *
  * Any failure falls back to the configured windows with source: fallback, and says so.
  *
  * @format
  */
 
-import { listSites, sitesNear, seasonalWindows, excludedDates } from "../adapters/webtris.js";
-import { estimatedLaunchDate, fallbackTemporalWindows } from "../domain/temporal-windows.js";
+import {
+  listSites,
+  sitesNear,
+  seasonalWindows,
+  excludedDates,
+} from "../adapters/webtris.js";
+import {
+  estimatedLaunchDate,
+  fallbackTemporalWindows,
+} from "../domain/temporal-windows.js";
 import { isPassenger } from "../domain/document.js";
 import { haversineMetres } from "../lib/geo.js";
 import {

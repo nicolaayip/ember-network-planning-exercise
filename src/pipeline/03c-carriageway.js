@@ -1,10 +1,12 @@
 /**
- * Step 3c — CARRIAGEWAY (pipeline step 3c).
+ * Pipeline step 3c — CARRIAGEWAY.
  *
  * 1. Walk each leg along the Google route polyline (subsampled for Overpass).
  * 2. Query OSM ways on the path; tag each destination stop urban / single / dual.
  *
  * Skipped when route geometry is missing.
+ *
+ * @format
  */
 
 import { waysAlongPath } from "../adapters/overpass.js";

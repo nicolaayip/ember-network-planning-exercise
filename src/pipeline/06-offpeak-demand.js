@@ -1,5 +1,5 @@
 /**
- * Step 6 — OFF-PEAK DEMAND (pipeline step 6).
+ * Pipeline step 6 — OFF-PEAK DEMAND.
  *
  * 1. Per stop, fetch Overpass POIs in the catchment bbox; filter to the isochrone polygon.
  * 2. Score weekday and weekend POI gravity (distance-decayed weights).
@@ -108,4 +108,3 @@ function fillPairs(ctx) {
   }
   log.info({ pairs: filled }, "off-peak demand filled");
 }
-

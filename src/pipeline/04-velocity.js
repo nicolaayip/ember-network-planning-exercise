@@ -1,5 +1,5 @@
 /**
- * Step 4 — VELOCITY (pipeline step 4).
+ * Pipeline step 4 — VELOCITY.
  *
  * 1. Apply coach time factors from carriageway kind (low / central / high scenarios).
  * 2. Compute cumulative arrivals per traffic sample; write OD travel times and coach path km.
@@ -25,7 +25,11 @@ import {
   schedulingDwellSeconds,
 } from "../domain/document.js";
 import { parseHHMM } from "../lib/time.js";
-import { baselineSampleId, routingSamplesForDirection, weekdayBands } from "../domain/traffic-bands.js";
+import {
+  baselineSampleId,
+  routingSamplesForDirection,
+  weekdayBands,
+} from "../domain/traffic-bands.js";
 import { round1, round2, round3 } from "../lib/round.js";
 
 const hhmmDiff = (a, b) => parseHHMM(b) - parseHHMM(a);
@@ -99,7 +103,11 @@ export async function run(ctx) {
       const withoutFactors = d.withoutLegs.map((leg) =>
         coachFactorForKind(shortenedStops[leg.toIndex]?.carriagewayKind, fallback),
       );
-      const withoutCoachStatic = sumCoachStaticMin(d.withoutLegs, withoutFactors, baseline);
+      const withoutCoachStatic = sumCoachStaticMin(
+        d.withoutLegs,
+        withoutFactors,
+        baseline,
+      );
       if (withoutCoachStatic == null) continue;
       deviation[stops[i].naptanId] = {
         minutes: round1(fullCoachStatic - withoutCoachStatic + dwell[i] / 60),

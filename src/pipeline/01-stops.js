@@ -1,7 +1,7 @@
 /**
- * Step 1 — INPUT (pipeline step 1).
+ * Pipeline step 1 — STOPS.
  *
- * 1. Collect stops missing coordinates or display names (depot is never looked up).
+ * 1. Find passenger stops still missing NaPTAN name or coordinates (import-route script matches KMZ pins to NaPTAN; depot skipped here as already has coords from import).
  * 2. Look up each NaPTAN ATCO code in the loaded index (BNG→WGS84 handled in the adapter).
  * 3. Fill stopName, localityName, and coordinates; throw if any code is missing.
  *

@@ -1,11 +1,13 @@
 /**
- * Step 3b — REFINE BASIS (pipeline step 3b).
+ * Pipeline step 3b — REFINE BASIS.
  *
  * 1. List active WebTRIS counters on the driven route polyline (matching compass, within siteRadiusM).
  * 2. Keep the current basis site when already on-route (≤ 20 m); else re-pick the best on-route site near the terminal anchor.
  * 3. On change, re-apply that direction's temporal windows and basis metadata; refresh weekend ratio.
  *
  * No-op when temporal source is not webtris, evaluation cache is missing, or route geometry is absent.
+ *
+ * @format
  */
 
 import { listSites, sitesNear } from "../adapters/webtris.js";
@@ -45,7 +47,9 @@ export async function run(ctx) {
   const anchors = { outbound: pax[0].coordinates, return: pax.at(-1).coordinates };
   const anchorNames = { outbound: pax[0].stopName, return: pax.at(-1).stopName };
   const compasses = {
-    outbound: doc.trafficProfile.outboundCompassDirection ?? doc.estimatedTemporalWindows.outbound.compass,
+    outbound:
+      doc.trafficProfile.outboundCompassDirection ??
+      doc.estimatedTemporalWindows.outbound.compass,
     return: doc.estimatedTemporalWindows.return.compass,
   };
 
@@ -56,7 +60,9 @@ export async function run(ctx) {
 
   for (const dirName of ["outbound", "return"]) {
     const compass = compasses[dirName];
-    const points = decodePolyline(ctx.routeGeometry[dirName].polyline).map(([lng, lat]) => ({ lat, lng }));
+    const points = decodePolyline(ctx.routeGeometry[dirName].polyline).map(
+      ([lng, lat]) => ({ lat, lng }),
+    );
     const routeNear = sitesNear(allSites, points, cfg.siteRadiusM, roadRegex)
       .filter((s) => /active/i.test(s.status) && s.direction === compass)
       .sort((a, b) => a.distanceM - b.distanceM);
@@ -65,13 +71,22 @@ export async function run(ctx) {
     const currentOnRoute = routeNear.find((s) => s.id === currentId);
     if (currentOnRoute?.distanceM <= ON_ROUTE_M) {
       patchBasisRouteDistance(doc, dirName, currentOnRoute.distanceM);
-      log.info({ direction: dirName, siteId: currentId, routeDistanceM: currentOnRoute.distanceM }, "basis site already on route");
+      log.info(
+        {
+          direction: dirName,
+          siteId: currentId,
+          routeDistanceM: currentOnRoute.distanceM,
+        },
+        "basis site already on route",
+      );
       continue;
     }
 
     const anchorRadiusM = Math.min(
       cfg.siteRadiusM,
-      (currentOnRoute ? haversineMetres(anchors[dirName], currentOnRoute) : cfg.siteRadiusM) + ANCHOR_SLACK_M,
+      (currentOnRoute
+        ? haversineMetres(anchors[dirName], currentOnRoute)
+        : cfg.siteRadiusM) + ANCHOR_SLACK_M,
     );
     let candidates = routeNear
       .filter((s) => haversineMetres(anchors[dirName], s) <= anchorRadiusM)
@@ -84,26 +99,50 @@ export async function run(ctx) {
     for (const site of candidates) {
       let evaluated = evaluatedById.get(site.id);
       if (!evaluated) {
-        evaluated = await evaluateSite(site, ctx.trafficWindows, ctx.trafficExcluded, log);
+        evaluated = await evaluateSite(
+          site,
+          ctx.trafficWindows,
+          ctx.trafficExcluded,
+          log,
+        );
         evaluatedById.set(site.id, evaluated);
         ctx.trafficEvaluated.push(evaluated);
       } else {
-        evaluated = { ...evaluated, site: { ...evaluated.site, distanceM: site.distanceM, nearestPointIndex: site.nearestPointIndex } };
+        evaluated = {
+          ...evaluated,
+          site: {
+            ...evaluated.site,
+            distanceM: site.distanceM,
+            nearestPointIndex: site.nearestPointIndex,
+          },
+        };
       }
       pool.push(evaluated);
     }
 
-    const pick = pickBasisSiteOnRoute(pool, compass, anchors[dirName], cfg, ANCHOR_SLACK_M);
+    const pick = pickBasisSiteOnRoute(
+      pool,
+      compass,
+      anchors[dirName],
+      cfg,
+      ANCHOR_SLACK_M,
+    );
     if (!pick) {
       log.warn({ direction: dirName }, "refine-basis: no qualifying on-route counter");
       continue;
     }
     if (pick.site.id === currentId) {
-      if (pick.site.distanceM != null) patchBasisRouteDistance(doc, dirName, pick.site.distanceM);
+      if (pick.site.distanceM != null)
+        patchBasisRouteDistance(doc, dirName, pick.site.distanceM);
       continue;
     }
 
-    applyDirectionBasis(doc, dirName, pick, basisSiteRecord(dirName, compass, anchorNames[dirName], pick));
+    applyDirectionBasis(
+      doc,
+      dirName,
+      pick,
+      basisSiteRecord(dirName, compass, anchorNames[dirName], pick),
+    );
     changed = true;
     log.info(
       {

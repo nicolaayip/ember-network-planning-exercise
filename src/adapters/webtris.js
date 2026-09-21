@@ -7,7 +7,7 @@
  *
  * All fetches go through the disk cache (key = endpoint + params), so a re-run costs nothing
  * and MOCK=true is served from cache. Pure profile/peak functions live here too and are unit-tested
- * (test/adapters/webtris.test.js). Consumed by src/pipeline/00-temporal.js.
+ * (test/adapters/webtris.test.js). Consumed by src/pipeline/02-temporal.js.
  *
  * OWNERSHIP: this file is maintained by the pipeline/engine agent. Please do not replace it; add
  * functions alongside. Known idea to merge from a parallel draft: latestCompleteWeek() — choose the

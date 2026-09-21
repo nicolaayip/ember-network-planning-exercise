@@ -1,11 +1,14 @@
 /**
- * Step 11 — OUTPUT (pipeline step 11).
+ * Pipeline step 10 — OUTPUT.
  *
  * 1. Build the assumptions register from config.
  * 2. Stamp generatedAt on the document.
  *
  * Schema validation runs in runPipeline; CSV tables are written by src/output/tables.js (cli).
+ *
+ * @format
  */
+
 import { buildAssumptionsRegister } from "../domain/assumptions.js";
 
 export const name = "output";
